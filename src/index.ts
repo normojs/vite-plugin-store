@@ -12,9 +12,11 @@ const MODULE_ID = 'vite-plugin-store'
 function storePlugin(userOptions: UserOptions = {}): Plugin {
   let config: ResolvedConfig | undefined
   let filesPath: string[] = []
+
   let generatedRoutes: Route[] | null | undefined
   let generatedStore: Store | null | undefined
-  let pagesDirPaths: string[] = []
+
+  const pagesDirPaths: string[] = []
 
   const options: ResolvedOptions = resolveOptions(userOptions)
 
@@ -34,7 +36,8 @@ function storePlugin(userOptions: UserOptions = {}): Plugin {
           generatedRoutes = []
           generatedStore = { strict: true }
           filesPath = []
-          pagesDirPaths = []
+
+          // pagesDirPaths = []
 
           const storeDirPath = normalizePath(resolve(options.root, options.storeDir))
           debug.gen('dir: %O', storeDirPath)
@@ -94,6 +97,7 @@ function storePlugin(userOptions: UserOptions = {}): Plugin {
       }
     },
     async handleHotUpdate({ file, server, read }) {
+      // TODO 热加载
       const isPagesDir = pagesDirPaths.find(p => file.startsWith(`${p}/`))
       // Handle pages HMR
       if (isPagesDir && options.extensionsRE.test(file)) {

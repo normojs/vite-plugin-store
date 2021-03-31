@@ -68,7 +68,13 @@ export function generateStore(filesPath: string[], storeDir: string, options: Re
   for (const filePath of filesPath) {
     const resolvedPath = filePath.replace(extensionsRE, '')
     const node = resolvedPath.split('/').pop()
-    console.log(resolvedPath, node)
+    const component = `/${storeDir}/${filePath}`
+    /*
+       TODO
+       判断index里是否有getters、mutations、actions等，如果有，则忽略目录下的getters等文件
+
+    */
+    console.log(resolvedPath, node, component)
   }
   return {
     strict: true,
