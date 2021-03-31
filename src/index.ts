@@ -1,8 +1,8 @@
 import { resolve, basename } from 'path'
 import type { Plugin, ResolvedConfig, ModuleNode } from 'vite'
-import { Route, ResolvedOptions, UserOptions, PageDirOptions } from './types'
+import { Route, ResolvedOptions, UserOptions, PageDirOptions, Store } from './types'
 import { getFilesFromPath } from './files'
-import { generateRoutes, generateClientCode, updateRouteFromHMR } from './generate'
+import { generateRoutes, generateStore, generateClientCode, updateRouteFromHMR } from './generate'
 import { debug, normalizePath } from './utils'
 import { parseVueRequest } from './query'
 import { resolveOptions } from './options'
@@ -13,6 +13,7 @@ function storePlugin(userOptions: UserOptions = {}): Plugin {
   let config: ResolvedConfig | undefined
   let filesPath: string[] = []
   let generatedRoutes: Route[] | null | undefined
+  let generatedStore: Store | null | undefined
   let pagesDirPaths: string[] = []
 
   const options: ResolvedOptions = resolveOptions(userOptions)
@@ -31,20 +32,31 @@ function storePlugin(userOptions: UserOptions = {}): Plugin {
       if (id === MODULE_ID) {
         if (!generatedRoutes) {
           generatedRoutes = []
+          generatedStore = { strict: true }
           filesPath = []
           pagesDirPaths = []
-          for (const pageDir of options.pagesDirOptions) {
-            const pageDirPath = normalizePath(resolve(options.root, pageDir.dir))
-            pagesDirPaths = pagesDirPaths.concat(pageDirPath)
-            debug.gen('dir: %O', pageDirPath)
 
-            const files = await getFilesFromPath(pageDirPath, options)
-            filesPath = filesPath.concat(files.map(f => `${pageDirPath}/${f}`))
-            debug.gen('files: %O', files)
+          const storeDirPath = normalizePath(resolve(options.root, options.storeDir))
+          debug.gen('dir: %O', storeDirPath)
+          // 相对路径数组
+          const files = await getFilesFromPath(storeDirPath, options)
+          // filesPath = filesPath.concat(files.map(f => `${storeDirPath}/${f}`))
+          debug.gen('files: %O', files)
+          // debug.gen('filesPath: %O', filesPath)
+          generatedStore = generateStore(files, options.storeDir, options)
 
-            const routes = generateRoutes(files, pageDir, options)
-            generatedRoutes = generatedRoutes.concat(routes)
-          }
+          // for (const pageDir of options.pagesDirOptions) {
+          //   const pageDirPath = normalizePath(resolve(options.root, pageDir.dir))
+          //   pagesDirPaths = pagesDirPaths.concat(pageDirPath)
+          //   debug.gen('dir: %O', pageDirPath)
+
+          //   const files = await getFilesFromPath(pageDirPath, options)
+          //   filesPath = filesPath.concat(files.map(f => `${pageDirPath}/${f}`))
+          //   debug.gen('files: %O', files)
+
+          //   const routes = generateRoutes(files, pageDir, options)
+          //   generatedRoutes = generatedRoutes.concat(routes)
+          // }
         }
         debug.gen('routes: %O', generatedRoutes)
 

@@ -9,7 +9,7 @@
 import fs from 'fs'
 import { join } from 'path'
 import deepEqual from 'deep-equal'
-import { Route, ResolvedOptions, PageDirOptions } from './types'
+import { Route, ResolvedOptions, PageDirOptions, Store } from './types'
 import { debug, isDynamicRoute, isCatchAllRoute, normalizePath, findRouteByFilename } from './utils'
 import { stringifyRoutes } from './stringify'
 import { parseCustomBlock, parseSFC } from './parseSfc'
@@ -57,6 +57,24 @@ function prepareRoutes(
       Object.assign(route, options.extendRoute(route, parent) || {})
   }
   return routes
+}
+
+export function generateStore(filesPath: string[], storeDir: string, options: ResolvedOptions): Store {
+  // console.log(filesPath, storeDir, options)
+  const {
+    extensionsRE,
+  } = options
+  const store: Store = { strict: true }
+  for (const filePath of filesPath) {
+    const resolvedPath = filePath.replace(extensionsRE, '')
+    const node = resolvedPath.split('/').pop()
+    console.log(resolvedPath, node)
+  }
+  return {
+    strict: true,
+    name: 'index',
+    path: 'index',
+  }
 }
 
 export function generateRoutes(filesPath: string[], pagesDirOptions: PageDirOptions, options: ResolvedOptions): Route[] {

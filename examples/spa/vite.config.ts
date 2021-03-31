@@ -10,12 +10,12 @@ const config = defineConfig({
       include: [/\.vue$/, /\.md$/],
     }),
     Store({
-      storeDir: 'src/store', // [],
+      storeDir: 'src/store',
       pagesDir: [
         { dir: 'src/pages', baseRoute: '' },
         { dir: 'src/features/admin/pages', baseRoute: 'admin' },
       ],
-      extensions: ['vue', 'md'],
+      extensions: ['ts', 'js'],
       syncIndex: false,
       replaceSquareBrackets: true,
     }),

@@ -12,10 +12,13 @@ export type ImportModeResolveFn = (filepath: string) => ImportMode
 export interface Module {
   // 命名空间：默认开启
   namespaced?: boolean
-  // 文件名（不包含后缀名），[name].ts
-  name: string
   // 别名，默认使用文件名，允许用户自定义
   alias?: string
+
+  // 模块名称，默认文件名或文件夹名称
+  name: string
+  // 文件（不包含后缀名），[name].ts，TODO index.ts、user/index.ts等
+  path: string
 
   state: Function
   mutations: Object
@@ -41,15 +44,24 @@ export interface Module {
         b: moduleB
       }
     })
+
+    interface Store 为 createStore()的参数
  */
 export interface Store {
-  // 严格模式： true（默认）|false
-  strict: boolean
+  strict: boolean // 严格模式： true（默认）|false
+  namespaced?: boolean // 命名空间：默认全局开启
+
+  name?: string // 模块名称，默认文件名或文件夹名称
+  path?: string // 文件（不包含后缀名），[name].ts，TODO index.ts、user/index.ts等
+  state?: Function
+  mutations?: Object
+  actions?: Object
+  getters?: Object
+
   plugins?: Function[]
   // 多模块
   modules?: Module[]
-  // 命名空间：默认全局开启
-  namespaced: boolean
+
 }
 export interface StoreDirOptions {
   dir: string
@@ -79,7 +91,7 @@ interface Options {
    * Relative path to the directory to search for store components.
    * @default 'src/store'
    */
-  storeDir: string | string[] | PageDirOptions[]
+  storeDir: string
   /**
    * Relative path to the directory to search for page components.
    * @default 'src/pages'
@@ -134,6 +146,7 @@ export interface ResolvedOptions extends Options {
    * @default config.root
    */
   root: string
+  storeDir: string
   /**
    * Page Dir as a normalized array of PageDirOptions
    */

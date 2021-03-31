@@ -2,9 +2,9 @@ import { UserOptions, ResolvedOptions, PageDirOptions } from './types'
 
 export function resolveOptions(userOptions: UserOptions): ResolvedOptions {
   const {
-    storeDir = ['src/store'],
+    storeDir = 'src/store',
     pagesDir = ['src/pages'],
-    extensions = ['vue', 'js'],
+    extensions = ['ts', 'js'],
     importMode = 'async',
     routeBlockLang = 'json5',
     exclude = [],
@@ -36,6 +36,7 @@ export function resolveOptions(userOptions: UserOptions): ResolvedOptions {
     {
       routeBlockLang,
       root,
+      storeDir,
       pagesDir,
       pagesDirOptions,
       extensions,
