@@ -48,18 +48,7 @@ function storePlugin(userOptions: UserOptions = {}): Plugin {
           // debug.gen('filesPath: %O', filesPath)
           generatedStore = generateStore(files, options.storeDir, options)
 
-          // for (const pageDir of options.pagesDirOptions) {
-          //   const pageDirPath = normalizePath(resolve(options.root, pageDir.dir))
-          //   pagesDirPaths = pagesDirPaths.concat(pageDirPath)
-          //   debug.gen('dir: %O', pageDirPath)
-
-          //   const files = await getFilesFromPath(pageDirPath, options)
-          //   filesPath = filesPath.concat(files.map(f => `${pageDirPath}/${f}`))
-          //   debug.gen('files: %O', files)
-
-          //   const routes = generateRoutes(files, pageDir, options)
-          //   generatedRoutes = generatedRoutes.concat(routes)
-          // }
+          // TODO
         }
         debug.gen('routes: %O', generatedRoutes)
 
@@ -99,6 +88,7 @@ function storePlugin(userOptions: UserOptions = {}): Plugin {
     async handleHotUpdate({ file, server, read }) {
       // TODO 热加载
       const isPagesDir = pagesDirPaths.find(p => file.startsWith(`${p}/`))
+      // 是pages下的文件更新，且，
       // Handle pages HMR
       if (isPagesDir && options.extensionsRE.test(file)) {
         let needReload = false

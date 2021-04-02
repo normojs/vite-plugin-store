@@ -9,7 +9,7 @@
 import fs from 'fs'
 import { join } from 'path'
 import deepEqual from 'deep-equal'
-import { Route, ResolvedOptions, PageDirOptions, Store } from './types'
+import { Route, ResolvedOptions, PageDirOptions, Store, Module } from './types'
 import { debug, isDynamicRoute, isCatchAllRoute, normalizePath, findRouteByFilename } from './utils'
 import { stringifyRoutes } from './stringify'
 import { parseCustomBlock, parseSFC } from './parseSfc'
@@ -58,24 +58,53 @@ function prepareRoutes(
   }
   return routes
 }
-
+/**
+ * TODO 处理文件内容，参考: vite-plugin-components
+ * TODO source-map
+ *
+ * @export
+ * @param {string[]} filesPath
+ * @param {string} storeDir
+ * @param {ResolvedOptions} options
+ * @return {*}  {Store}
+ */
 export function generateStore(filesPath: string[], storeDir: string, options: ResolvedOptions): Store {
   // console.log(filesPath, storeDir, options)
   const {
     extensionsRE,
   } = options
   const store: Store = { strict: true }
+
+  const modules: Module[] = []
   for (const filePath of filesPath) {
+    // 去除后缀
     const resolvedPath = filePath.replace(extensionsRE, '')
-    const node = resolvedPath.split('/').pop()
+    // resolvedPath: 'index' | 'user/index' | 'user/getters' | 'user/mutations'
+    const temps = resolvedPath.split('/')
+    // 'index' | 'user' | 'user' | 'user'
+    const moduleName = temps[0]
+    // undefined | 'index' | 'getters' | 'mutations'
+    const moduleInType = temps[1]
+
+    // 这个是store/index.js
+    if (moduleName === 'index' && moduleInType === undefined) {
+      // TODO  处理store
+      // store
+      continue
+    }
     const component = `/${storeDir}/${filePath}`
+
+    // TODO 获取module：工作空间、别名
+    // modules.push()
+
     /*
        TODO
        判断index里是否有getters、mutations、actions等，如果有，则忽略目录下的getters等文件
-
+       以index中为准
     */
-    console.log(resolvedPath, node, component)
-  }
+    console.log(resolvedPath, moduleName, moduleInType)
+  }// end for
+  // TODO 处理store：工作空间、严格模式、
   return {
     strict: true,
     name: 'index',
