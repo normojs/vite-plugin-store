@@ -60,6 +60,7 @@ function prepareRoutes(
 }
 /**
  * TODO 处理文件内容，参考: vite-plugin-components
+ * 处理严格模式、工作空间
  * TODO source-map
  *
  * @export
@@ -83,16 +84,20 @@ export function generateStore(filesPath: string[], storeDir: string, options: Re
     const temps = resolvedPath.split('/')
     // 'index' | 'user' | 'user' | 'user'
     const moduleName = temps[0]
-    // undefined | 'index' | 'getters' | 'mutations'
-    const moduleInType = temps[1]
+    // undefined(module) | 'index' | 'getters' | 'mutations'
+    const moduleInType = temps[1] || 'module'
+    const componentPath = `/${storeDir}/${filePath}`
+    console.log('====:', resolvedPath, moduleName, moduleInType, componentPath, filePath)
 
-    // 这个是store/index.js
-    if (moduleName === 'index' && moduleInType === undefined) {
+    // 这个是store/index.[js,ts]
+    if (moduleName === 'index' && moduleInType === 'module') {
       // TODO  处理store
       // store
+      store.name = 'index'
+      store.path = componentPath
+      // TODO 处理index.ts或index.js
       continue
     }
-    const component = `/${storeDir}/${filePath}`
 
     // TODO 获取module：工作空间、别名
     // modules.push()
@@ -102,14 +107,11 @@ export function generateStore(filesPath: string[], storeDir: string, options: Re
        判断index里是否有getters、mutations、actions等，如果有，则忽略目录下的getters等文件
        以index中为准
     */
-    console.log(resolvedPath, moduleName, moduleInType)
+    // console.log('====:', resolvedPath, moduleName, moduleInType, componentPath)
   }// end for
+
   // TODO 处理store：工作空间、严格模式、
-  return {
-    strict: true,
-    name: 'index',
-    path: 'index',
-  }
+  return store
 }
 
 export function generateRoutes(filesPath: string[], pagesDirOptions: PageDirOptions, options: ResolvedOptions): Route[] {
@@ -180,10 +182,11 @@ export function generateRoutes(filesPath: string[], pagesDirOptions: PageDirOpti
   return preparedRoutes
 }
 
-export function generateClientCode(routes: Route[], options: ResolvedOptions) {
-  const { imports, stringRoutes } = stringifyRoutes(routes, options)
+export function generateClientCode(store: Store, options: ResolvedOptions) {
+  return JSON.stringify(store)
+  // const { imports, stringRoutes } = stringifyRoutes(routes, options)
 
-  return `${imports.join('\n')}\n\nconst routes = ${stringRoutes}\n\nexport default routes`
+  // return `${imports.join('\n')}\n\nconst routes = ${stringRoutes}\n\nexport default routes`
 }
 
 export function updateRouteFromHMR(content: string, filename: string, routes: Route[], options: ResolvedOptions): boolean {

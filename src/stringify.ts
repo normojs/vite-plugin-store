@@ -5,6 +5,13 @@ import {
 import { ResolvedOptions, Route } from './types'
 
 /**
+ * 创建一个字符串化的Vuex Store定义。
+ */
+export function stringifyStores() {
+  return ''
+}
+
+/**
  * Creates a stringified Vue Router route definition.
  */
 export function stringifyRoutes(

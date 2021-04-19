@@ -52,7 +52,8 @@ function storePlugin(userOptions: UserOptions = {}): Plugin {
         }
         debug.gen('routes: %O', generatedRoutes)
 
-        const clientCode = generateClientCode(generatedRoutes, options)
+        // TODO 生成code
+        const clientCode = generateClientCode(generatedStore!, options)
         // debug.gen('client code: %O', clientCode)
 
         return clientCode
@@ -60,6 +61,8 @@ function storePlugin(userOptions: UserOptions = {}): Plugin {
     },
     async transform(code: string, id: string) {
       const { query } = parseVueRequest(id)
+
+      if (id === 'vite-plugin-store') console.log('code: 开始\n', code, '\n 结束')
 
       if (query && query.vue && query.type === 'route') {
         return {
@@ -69,6 +72,7 @@ function storePlugin(userOptions: UserOptions = {}): Plugin {
       }
       return {
         code,
+        // TODO source-map
         map: null,
       }
     },
