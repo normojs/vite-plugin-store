@@ -182,8 +182,11 @@ export function generateRoutes(filesPath: string[], pagesDirOptions: PageDirOpti
   return preparedRoutes
 }
 
+/**
+ * TODO 生成数据
+ */
 export function generateClientCode(store: Store, options: ResolvedOptions) {
-  return JSON.stringify(store)
+  return `export default ${JSON.stringify(store)}`
   // const { imports, stringRoutes } = stringifyRoutes(routes, options)
 
   // return `${imports.join('\n')}\n\nconst routes = ${stringRoutes}\n\nexport default routes`

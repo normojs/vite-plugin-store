@@ -14,6 +14,7 @@ function storePlugin(userOptions: UserOptions = {}): Plugin {
   let filesPath: string[] = []
 
   let generatedRoutes: Route[] | null | undefined
+  let generatedStores: Store[] | null | undefined
   let generatedStore: Store | null | undefined
 
   const pagesDirPaths: string[] = []
@@ -32,8 +33,8 @@ function storePlugin(userOptions: UserOptions = {}): Plugin {
     },
     async load(id) {
       if (id === MODULE_ID) {
-        if (!generatedRoutes) {
-          generatedRoutes = []
+        if (!generatedStores) {
+          generatedStores = []
           generatedStore = { strict: true }
           filesPath = []
 
@@ -50,7 +51,7 @@ function storePlugin(userOptions: UserOptions = {}): Plugin {
 
           // TODO
         }
-        debug.gen('routes: %O', generatedRoutes)
+        debug.gen('routes: %O', generatedStores)
 
         // TODO 生成code
         const clientCode = generateClientCode(generatedStore!, options)
@@ -62,7 +63,8 @@ function storePlugin(userOptions: UserOptions = {}): Plugin {
     async transform(code: string, id: string) {
       const { query } = parseVueRequest(id)
 
-      if (id === 'vite-plugin-store') console.log('code: 开始\n', code, '\n 结束')
+      if (id === 'vite-plugin-store')
+        console.log('code: 开始\n', code, '\n 结束')
 
       if (query && query.vue && query.type === 'route') {
         return {

@@ -31,7 +31,7 @@ Object {
         "end": Object {
           "column": 1,
           "line": 21,
-          "offset": 230,
+          "offset": 250,
         },
         "source": "
 {
@@ -44,7 +44,7 @@ Object {
         "start": Object {
           "column": 8,
           "line": 14,
-          "offset": 160,
+          "offset": 173,
         },
       },
       "map": Object {
@@ -104,7 +104,7 @@ defineProps({
       "end": Object {
         "column": 1,
         "line": 8,
-        "offset": 92,
+        "offset": 99,
       },
       "source": "
 import { defineProps } from 'vue'
@@ -156,14 +156,14 @@ defineProps({
             "end": Object {
               "column": 18,
               "line": 11,
-              "offset": 131,
+              "offset": 141,
             },
             "source": "
   blog/[id].vue: ",
             "start": Object {
               "column": 11,
               "line": 10,
-              "offset": 113,
+              "offset": 122,
             },
           },
           "type": 2,
@@ -177,13 +177,13 @@ defineProps({
               "end": Object {
                 "column": 23,
                 "line": 11,
-                "offset": 136,
+                "offset": 146,
               },
               "source": "id",
               "start": Object {
                 "column": 21,
                 "line": 11,
-                "offset": 134,
+                "offset": 144,
               },
             },
             "type": 4,
@@ -192,13 +192,13 @@ defineProps({
             "end": Object {
               "column": 26,
               "line": 11,
-              "offset": 139,
+              "offset": 149,
             },
             "source": "{{ id }}",
             "start": Object {
               "column": 18,
               "line": 11,
-              "offset": 131,
+              "offset": 141,
             },
           },
           "type": 5,
@@ -210,14 +210,14 @@ defineProps({
             "end": Object {
               "column": 1,
               "line": 12,
-              "offset": 140,
+              "offset": 151,
             },
             "source": "
 ",
             "start": Object {
               "column": 26,
               "line": 11,
-              "offset": 139,
+              "offset": 149,
             },
           },
           "type": 2,
@@ -229,7 +229,7 @@ defineProps({
         "end": Object {
           "column": 12,
           "line": 12,
-          "offset": 151,
+          "offset": 162,
         },
         "source": "<template>
   blog/[id].vue: {{ id }}
@@ -237,7 +237,7 @@ defineProps({
         "start": Object {
           "column": 1,
           "line": 10,
-          "offset": 103,
+          "offset": 112,
         },
       },
       "ns": 0,
@@ -254,7 +254,7 @@ defineProps({
       "end": Object {
         "column": 1,
         "line": 12,
-        "offset": 140,
+        "offset": 151,
       },
       "source": "
   blog/[id].vue: {{ id }}
@@ -262,7 +262,7 @@ defineProps({
       "start": Object {
         "column": 11,
         "line": 10,
-        "offset": 113,
+        "offset": 122,
       },
     },
     "map": Object {

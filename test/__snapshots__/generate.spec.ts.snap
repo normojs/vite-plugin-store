@@ -5,33 +5,26 @@ exports[`Generate Client Code: client code 1`] = `
 
 const routes = [
   {
-    \\"name\\": \\"all\\",
-    \\"path\\": \\"/:all(.*)\\",
+    \\"name\\": \\"[...all].vue\\",
+    \\"path\\": \\"/[...all].vue\\",
     \\"component\\": () => import('/test/assets/pages/[...all].vue'),
     \\"props\\": true
   },
   {
-    \\"path\\": \\"/about\\",
+    \\"name\\": \\"about.vue\\",
+    \\"path\\": \\"/about.vue\\",
     \\"component\\": () => import('/test/assets/pages/about.vue'),
-    \\"children\\": [
-      {
-        \\"name\\": \\"about\\",
-        \\"path\\": \\"\\",
-        \\"component\\": () => import('/test/assets/pages/about/index.vue'),
-        \\"props\\": true
-      }
-    ],
     \\"props\\": true
   },
   {
-    \\"name\\": \\"components\\",
-    \\"path\\": \\"/components\\",
+    \\"name\\": \\"components.vue\\",
+    \\"path\\": \\"/components.vue\\",
     \\"component\\": () => import('/test/assets/pages/components.vue'),
     \\"props\\": true
   },
   {
     \\"name\\": \\"name-override\\",
-    \\"path\\": \\"/\\",
+    \\"path\\": \\"/index.vue\\",
     \\"component\\": _test_assets_pages_index_vue,
     \\"props\\": true,
     \\"meta\\": {
@@ -39,14 +32,20 @@ const routes = [
     }
   },
   {
-    \\"name\\": \\"sensor-current\\",
-    \\"path\\": \\"/:sensor/current\\",
+    \\"name\\": \\"sensor-current.vue\\",
+    \\"path\\": \\"/:sensor/current.vue\\",
     \\"component\\": () => import('/test/assets/pages/[sensor]/current.vue'),
     \\"props\\": true
   },
   {
+    \\"name\\": \\"about-index.vue\\",
+    \\"path\\": \\"/about/index.vue\\",
+    \\"component\\": () => import('/test/assets/pages/about/index.vue'),
+    \\"props\\": true
+  },
+  {
     \\"name\\": \\"name-override\\",
-    \\"path\\": \\"/blog/:id\\",
+    \\"path\\": \\"/blog/[id].vue\\",
     \\"component\\": () => import('/test/assets/pages/blog/[id].vue'),
     \\"props\\": true,
     \\"meta\\": {
@@ -54,14 +53,14 @@ const routes = [
     }
   },
   {
-    \\"name\\": \\"blog\\",
-    \\"path\\": \\"/blog\\",
+    \\"name\\": \\"blog-index.vue\\",
+    \\"path\\": \\"/blog/index.vue\\",
     \\"component\\": () => import('/test/assets/pages/blog/index.vue'),
     \\"props\\": true
   },
   {
-    \\"name\\": \\"blog-today\\",
-    \\"path\\": \\"/blog/today\\",
+    \\"name\\": \\"blog-today-index.vue\\",
+    \\"path\\": \\"/blog/today/index.vue\\",
     \\"component\\": () => import('/test/assets/pages/blog/today/index.vue'),
     \\"props\\": true
   }
@@ -74,27 +73,20 @@ exports[`Generate Nuxt Style Routes: nuxt style routes 1`] = `
 Array [
   Object {
     "component": "/test/assets/nuxt-pages/_.vue",
-    "name": "all",
-    "path": "/:all(.*)",
+    "name": ".vue",
+    "path": "/:.vue",
     "props": true,
   },
   Object {
-    "children": Array [
-      Object {
-        "component": "/test/assets/nuxt-pages/about/index.vue",
-        "name": "about",
-        "path": "",
-        "props": true,
-      },
-    ],
     "component": "/test/assets/nuxt-pages/about.vue",
-    "path": "/about",
+    "name": "about.vue",
+    "path": "/about.vue",
     "props": true,
   },
   Object {
     "component": "/test/assets/nuxt-pages/components.vue",
-    "name": "components",
-    "path": "/components",
+    "name": "components.vue",
+    "path": "/components.vue",
     "props": true,
   },
   Object {
@@ -103,31 +95,37 @@ Array [
       "requiresAuth": false,
     },
     "name": "name-override",
-    "path": "/",
+    "path": "/index.vue",
     "props": true,
   },
   Object {
     "component": "/test/assets/nuxt-pages/_sensor/current.vue",
-    "name": "sensor-current",
-    "path": "/:sensor/current",
+    "name": "sensor-current.vue",
+    "path": "/:sensor/current.vue",
+    "props": true,
+  },
+  Object {
+    "component": "/test/assets/nuxt-pages/about/index.vue",
+    "name": "about-index.vue",
+    "path": "/about/index.vue",
     "props": true,
   },
   Object {
     "component": "/test/assets/nuxt-pages/blog/_id.vue",
-    "name": "blog-id",
-    "path": "/blog/:id",
+    "name": "blog-id.vue",
+    "path": "/blog/:id.vue",
     "props": true,
   },
   Object {
     "component": "/test/assets/nuxt-pages/blog/index.vue",
-    "name": "blog",
-    "path": "/blog",
+    "name": "blog-index.vue",
+    "path": "/blog/index.vue",
     "props": true,
   },
   Object {
     "component": "/test/assets/nuxt-pages/blog/today/index.vue",
-    "name": "blog-today",
-    "path": "/blog/today",
+    "name": "blog-today-index.vue",
+    "path": "/blog/today/index.vue",
     "props": true,
   },
 ]
@@ -137,27 +135,20 @@ exports[`Generate Routes: routes 1`] = `
 Array [
   Object {
     "component": "/test/assets/pages/[...all].vue",
-    "name": "all",
-    "path": "/:all(.*)",
+    "name": "[...all].vue",
+    "path": "/[...all].vue",
     "props": true,
   },
   Object {
-    "children": Array [
-      Object {
-        "component": "/test/assets/pages/about/index.vue",
-        "name": "about",
-        "path": "",
-        "props": true,
-      },
-    ],
     "component": "/test/assets/pages/about.vue",
-    "path": "/about",
+    "name": "about.vue",
+    "path": "/about.vue",
     "props": true,
   },
   Object {
     "component": "/test/assets/pages/components.vue",
-    "name": "components",
-    "path": "/components",
+    "name": "components.vue",
+    "path": "/components.vue",
     "props": true,
   },
   Object {
@@ -166,13 +157,19 @@ Array [
       "requiresAuth": false,
     },
     "name": "name-override",
-    "path": "/",
+    "path": "/index.vue",
     "props": true,
   },
   Object {
     "component": "/test/assets/pages/[sensor]/current.vue",
-    "name": "sensor-current",
-    "path": "/:sensor/current",
+    "name": "sensor-current.vue",
+    "path": "/:sensor/current.vue",
+    "props": true,
+  },
+  Object {
+    "component": "/test/assets/pages/about/index.vue",
+    "name": "about-index.vue",
+    "path": "/about/index.vue",
     "props": true,
   },
   Object {
@@ -181,19 +178,19 @@ Array [
       "requiresAuth": false,
     },
     "name": "name-override",
-    "path": "/blog/:id",
+    "path": "/blog/[id].vue",
     "props": true,
   },
   Object {
     "component": "/test/assets/pages/blog/index.vue",
-    "name": "blog",
-    "path": "/blog",
+    "name": "blog-index.vue",
+    "path": "/blog/index.vue",
     "props": true,
   },
   Object {
     "component": "/test/assets/pages/blog/today/index.vue",
-    "name": "blog-today",
-    "path": "/blog/today",
+    "name": "blog-today-index.vue",
+    "path": "/blog/today/index.vue",
     "props": true,
   },
 ]
