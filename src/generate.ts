@@ -9,55 +9,11 @@
 import fs from 'fs'
 import { join } from 'path'
 import deepEqual from 'deep-equal'
-import { Route, ResolvedOptions, PageDirOptions, Store, Module } from './types'
+import { Route, ResolvedOptions, PageDirOptions, Store, Module, ModuleOptions } from './types'
 import { debug, isDynamicRoute, isCatchAllRoute, normalizePath, findRouteByFilename } from './utils'
 import { stringifyRoutes } from './stringify'
 import { parseCustomBlock, parseSFC } from './parseSfc'
 
-function prepareRoutes(
-  routes: Route[],
-  options: ResolvedOptions,
-  pagesDirOptions: PageDirOptions,
-  parent?: Route,
-) {
-  for (const route of routes) {
-    if (route.name) {
-      route.name = route.name.replace(/-index$/, '')
-      if (pagesDirOptions.baseRoute)
-        route.name = `${pagesDirOptions.baseRoute}-${route.name}`
-    }
-
-    if (parent) {
-      route.path = route.path.replace(/^\//, '')
-    }
-    else {
-      if (pagesDirOptions.baseRoute) {
-        const baseRoute = `/${pagesDirOptions.baseRoute}`
-        route.path = route.path === '/'
-          ? baseRoute
-          : baseRoute + route.path
-      }
-    }
-
-    route.props = true
-
-    if (route.children) {
-      delete route.name
-      route.children = prepareRoutes(route.children, options, pagesDirOptions, route)
-    }
-    const filePath = normalizePath(join(options.root, route.component))
-    const content = fs.readFileSync(filePath, 'utf8')
-    const parsed = parseSFC(content)
-    const routeBlock = parsed.customBlocks.find(b => b.type === 'route')
-
-    if (routeBlock)
-      Object.assign(route, parseCustomBlock(routeBlock, filePath, options))
-
-    if (typeof options.extendRoute === 'function')
-      Object.assign(route, options.extendRoute(route, parent) || {})
-  }
-  return routes
-}
 /**
  * TODO 处理文件内容，参考: vite-plugin-components
  * 处理严格模式、工作空间
@@ -69,14 +25,15 @@ function prepareRoutes(
  * @param {ResolvedOptions} options
  * @return {*}  {Store}
  */
-export function generateStore(filesPath: string[], storeDir: string, options: ResolvedOptions): Store {
+export function generateModuleOptions(filesPath: string[], storeDir: string, options: ResolvedOptions): ModuleOptions[] {
   // console.log(filesPath, storeDir, options)
   const {
     extensionsRE,
+    root,
   } = options
   const store: Store = { strict: true }
 
-  const modules: Module[] = []
+  const moduleOptions: ModuleOptions[] = []
   for (const filePath of filesPath) {
     // 去除后缀
     const resolvedPath = filePath.replace(extensionsRE, '')
@@ -87,20 +44,21 @@ export function generateStore(filesPath: string[], storeDir: string, options: Re
     // undefined(module) | 'index' | 'getters' | 'mutations'
     const moduleInType = temps[1] || 'module'
     const componentPath = `/${storeDir}/${filePath}`
-    console.log('====:', resolvedPath, moduleName, moduleInType, componentPath, filePath)
-
+    console.log('====:', { resolvedPath, moduleName, moduleInType, componentPath, filePath })
+    moduleOptions.push({ root: options.root, resolvedPath, moduleName, moduleInType, componentPath, filePath })
     // 这个是store/index.[js,ts]
     if (moduleName === 'index' && moduleInType === 'module') {
       // TODO  处理store
       // store
       store.name = 'index'
       store.path = componentPath
+
       // TODO 处理index.ts或index.js
+      // TODO 处理ts
       continue
     }
 
     // TODO 获取module：工作空间、别名
-    // modules.push()
 
     /*
        TODO
@@ -111,87 +69,22 @@ export function generateStore(filesPath: string[], storeDir: string, options: Re
   }// end for
 
   // TODO 处理store：工作空间、严格模式、
-  return store
-}
-
-export function generateRoutes(filesPath: string[], pagesDirOptions: PageDirOptions, options: ResolvedOptions): Route[] {
-  const { dir: pagesDir } = pagesDirOptions
-  const {
-    nuxtStyle,
-    extensionsRE,
-  } = options
-
-  const routes: Route[] = []
-
-  for (const filePath of filesPath) {
-    const resolvedPath = filePath.replace(extensionsRE, '')
-    const pathNodes = resolvedPath.split('/')
-
-    const component = `/${pagesDir}/${filePath}`
-    const route: Route = {
-      name: '',
-      path: '',
-      component,
-    }
-
-    let parentRoutes = routes
-
-    for (let i = 0; i < pathNodes.length; i++) {
-      const node = pathNodes[i]
-      const isDynamic = isDynamicRoute(node, nuxtStyle)
-      const isCatchAll = isCatchAllRoute(node, nuxtStyle)
-      const normalizedPart = (
-        isDynamic
-          ? nuxtStyle
-            ? isCatchAll ? 'all' : node.replace(/^_/, '')
-            : node.replace(/^\[(\.{3})?/, '').replace(/\]$/, '')
-          : node
-      ).toLowerCase()
-
-      route.name += route.name ? `-${normalizedPart}` : normalizedPart
-
-      // Check nested route
-      const parent = parentRoutes.find(node => node.name === route.name)
-
-      if (parent) {
-        parent.children = parent.children || []
-        parentRoutes = parent.children
-        route.path = ''
-      }
-      else if (normalizedPart === 'index' && !route.path) {
-        route.path += '/'
-      }
-      else if (normalizedPart !== 'index') {
-        if (isDynamic) {
-          route.path += `/:${normalizedPart}`
-          // Catch-all route
-          if (isCatchAll)
-            route.path += '(.*)'
-        }
-        else {
-          route.path += `/${normalizedPart}`
-        }
-      }
-    }
-
-    parentRoutes.push(route)
-  }
-
-  const preparedRoutes = prepareRoutes(routes, options, pagesDirOptions)
-
-  return preparedRoutes
+  return moduleOptions
 }
 
 /**
  * TODO 生成数据
  */
-export function generateClientCode(store: Store, options: ResolvedOptions) {
-  return `export default ${JSON.stringify(store)}`
+export function generateClientCode(moduleOptions: ModuleOptions[], options: ResolvedOptions) {
+  // TODO 根据moduleOptions生成代码
+
+  return `export default ${JSON.stringify(moduleOptions)}`
   // const { imports, stringRoutes } = stringifyRoutes(routes, options)
 
   // return `${imports.join('\n')}\n\nconst routes = ${stringRoutes}\n\nexport default routes`
 }
 
+// =====================================
 export function updateRouteFromHMR(content: string, filename: string, routes: Route[], options: ResolvedOptions): boolean {
   const parsed = parseSFC(content)
   const routeBlock = parsed.customBlocks.find(b => b.type === 'route')

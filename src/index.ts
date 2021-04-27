@@ -1,8 +1,8 @@
 import { resolve, basename } from 'path'
 import type { Plugin, ResolvedConfig, ModuleNode } from 'vite'
-import { Route, ResolvedOptions, UserOptions, PageDirOptions, Store } from './types'
+import { Route, ResolvedOptions, UserOptions, ModuleOptions, Store } from './types'
 import { getFilesFromPath } from './files'
-import { generateRoutes, generateStore, generateClientCode, updateRouteFromHMR } from './generate'
+import { generateModuleOptions, generateClientCode, updateRouteFromHMR } from './generate'
 import { debug, normalizePath } from './utils'
 import { parseVueRequest } from './query'
 import { resolveOptions } from './options'
@@ -12,6 +12,8 @@ const MODULE_ID = 'vite-plugin-store'
 function storePlugin(userOptions: UserOptions = {}): Plugin {
   let config: ResolvedConfig | undefined
   let filesPath: string[] = []
+
+  let moduleOptions: ModuleOptions[]
 
   let generatedRoutes: Route[] | null | undefined
   let generatedStores: Store[] | null | undefined
@@ -37,25 +39,17 @@ function storePlugin(userOptions: UserOptions = {}): Plugin {
           generatedStores = []
           generatedStore = { strict: true }
           filesPath = []
-
-          // pagesDirPaths = []
-
           const storeDirPath = normalizePath(resolve(options.root, options.storeDir))
           debug.gen('dir: %O', storeDirPath)
           // 相对路径数组
           const files = await getFilesFromPath(storeDirPath, options)
-          // filesPath = filesPath.concat(files.map(f => `${storeDirPath}/${f}`))
           debug.gen('files: %O', files)
-          // debug.gen('filesPath: %O', filesPath)
-          generatedStore = generateStore(files, options.storeDir, options)
-
-          // TODO
+          moduleOptions = generateModuleOptions(files, options.storeDir, options)
         }
-        debug.gen('routes: %O', generatedStores)
+        debug.gen('moduleOptions: %O', moduleOptions)
 
         // TODO 生成code
-        const clientCode = generateClientCode(generatedStore!, options)
-        // debug.gen('client code: %O', clientCode)
+        const clientCode = generateClientCode(moduleOptions, options)
 
         return clientCode
       }

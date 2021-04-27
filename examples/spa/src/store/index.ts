@@ -1,8 +1,9 @@
+// import { cacheGet, cacheSet } from '@/utils.js|.ts'
+
 // 严格模式，默认true
 export const strict = false
 // 插件地址，默认：plugins
 export const pluginDir = 'plugins'
-
 export const state = () => {
   return {
     path: '/',
@@ -12,12 +13,12 @@ export const state = () => {
 }
 
 export const mutations = {
-  token(state, data) {
+  token(state: any, data: any) {
     state.token = data
   },
 }
 export const actions = {
-  token({ commit }, params) {
+  token({ commit }: any, params: any) {
     commit('token', params)
   },
 }

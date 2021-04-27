@@ -26,6 +26,21 @@ export interface Module {
   getters: Object
 }
 
+export interface ModuleOptions {
+  // root
+  root: string
+  // e.g 'user/mutations' | 'user/actions' | 'user/index'
+  resolvedPath: string
+  // store module name
+  moduleName: string
+  // e.g 'index' | 'mutations' | 'getters' | 'actions'
+  moduleInType: string
+  // e.g '/src/store/user/mutations.ts' | '/src/store/user/index.ts'
+  componentPath: string
+  // e.g 'user/mutations.ts' | 'user/index.ts'
+  filePath: string
+}
+
 /**
  *
  *
