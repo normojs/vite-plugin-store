@@ -6,6 +6,7 @@ import './index.css'
 // import * as Store2 from './store'
 
 console.log('store: ', store)
+console.log(store.testString)
 // console.log('Store2: ', Store2)
 /*
 const store = createStore({

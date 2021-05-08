@@ -2,13 +2,37 @@ import {
   resolveImportMode,
   pathToName,
 } from './utils'
-import { ResolvedOptions, Route } from './types'
-
+import { ResolvedOptions, ModuleOptions, Route } from './types'
+import { buildModule, transformModule } from './build'
 /**
  * 创建一个字符串化的Vuex Store定义。
  */
-export function stringifyStores() {
-  return ''
+export function stringifyStores(moduleOptions: ModuleOptions[], options: ResolvedOptions) {
+  // TODO 循环处理
+  // let result = ''
+  const indexModule: any = { strict: true, moduleOptions }
+  for (const i in moduleOptions) {
+    //
+    const { name, module } = stringifyStore(moduleOptions[i], options)
+    indexModule[name] = module
+  }
+
+  // TODO 处理
+
+  // TODO 从string中取出结果
+  const res = buildModule(`${moduleOptions[0].root}${moduleOptions[0].componentPath}`)
+  const res2 = transformModule(res)
+  indexModule.testString = res
+  indexModule.testString2 = res2
+  return JSON.stringify(indexModule)
+}
+
+export function stringifyStore(moduleOptions: ModuleOptions, options: ResolvedOptions) {
+  const module = {}
+
+  // TODO 使用esbuild
+
+  return { name: moduleOptions.moduleName, module }
 }
 
 /**

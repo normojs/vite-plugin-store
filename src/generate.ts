@@ -11,7 +11,7 @@ import { join } from 'path'
 import deepEqual from 'deep-equal'
 import { Route, ResolvedOptions, PageDirOptions, Store, Module, ModuleOptions } from './types'
 import { debug, isDynamicRoute, isCatchAllRoute, normalizePath, findRouteByFilename } from './utils'
-import { stringifyRoutes } from './stringify'
+import { stringifyRoutes, stringifyStores } from './stringify'
 import { parseCustomBlock, parseSFC } from './parseSfc'
 
 /**
@@ -78,7 +78,10 @@ export function generateModuleOptions(filesPath: string[], storeDir: string, opt
 export function generateClientCode(moduleOptions: ModuleOptions[], options: ResolvedOptions) {
   // TODO 根据moduleOptions生成代码
 
-  return `export default ${JSON.stringify(moduleOptions)}`
+  console.log('moduleOptions ；', moduleOptions)
+  const stringStores = stringifyStores(moduleOptions, options)
+
+  return `export default ${stringStores}`
   // const { imports, stringRoutes } = stringifyRoutes(routes, options)
 
   // return `${imports.join('\n')}\n\nconst routes = ${stringRoutes}\n\nexport default routes`
