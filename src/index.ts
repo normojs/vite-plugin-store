@@ -58,7 +58,7 @@ function storePlugin(userOptions: UserOptions = {}): Plugin {
       const { query } = parseVueRequest(id)
 
       // if (id === 'vite-plugin-store')
-      // console.log('code: 开始\n', code, '\n 结束')
+      console.log('id: ', id)
 
       if (query && query.vue && query.type === 'route') {
         return {
