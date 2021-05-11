@@ -5,6 +5,9 @@ import Markdown from 'vite-plugin-md'
 import Restart from 'vite-plugin-restart'
 
 const config = defineConfig({
+  // resolve:{
+  //   alias:
+  // },
   plugins: [
     Vue({
       include: [/\.vue$/, /\.md$/],

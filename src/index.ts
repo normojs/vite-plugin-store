@@ -25,28 +25,32 @@ function storePlugin(userOptions: UserOptions = {}): Plugin {
 
   return {
     name: MODULE_ID,
-    enforce: 'pre',
+    // enforce: 'pre',
+    enforce: 'post',
     configResolved(_config) {
       config = _config
+      // debug.gen('config: %O', config)
       options.root = config.root
     },
     resolveId(id) {
+      console.log('MODULE_ID === id ', id)
       return MODULE_ID === id ? MODULE_ID : null
     },
     async load(id) {
+      debug.gen('load: %O', id)
       if (id === MODULE_ID) {
         if (!generatedStores) {
           generatedStores = []
           generatedStore = { strict: true }
           filesPath = []
           const storeDirPath = normalizePath(resolve(options.root, options.storeDir))
-          debug.gen('dir: %O', storeDirPath)
+          // debug.gen('dir: %O', storeDirPath)
           // 相对路径数组
           const files = await getFilesFromPath(storeDirPath, options)
-          debug.gen('files: %O', files)
+          // debug.gen('files: %O', files)
           moduleOptions = generateModuleOptions(files, options.storeDir, options)
         }
-        debug.gen('moduleOptions: %O', moduleOptions)
+        // debug.gen('moduleOptions: %O', moduleOptions)
 
         // TODO 生成code
         const clientCode = generateClientCode(moduleOptions, options)
@@ -58,7 +62,13 @@ function storePlugin(userOptions: UserOptions = {}): Plugin {
       const { query } = parseVueRequest(id)
 
       // if (id === 'vite-plugin-store')
-      console.log('id: ', id)
+      debug.transform('id: %O', id)
+      const s = 'App.vue'
+      if (id.endsWith(s))
+        console.log(`code: ${s} \n`, code, '\n\n')
+      // console.log('dd', id)
+
+      // return null
 
       if (query && query.vue && query.type === 'route') {
         return {

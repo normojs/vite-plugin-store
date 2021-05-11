@@ -21,9 +21,7 @@ export function stringifyStores(moduleOptions: ModuleOptions[], options: Resolve
 
   // TODO 从string中取出结果
   const res = buildModule(`${moduleOptions[0].root}${moduleOptions[0].componentPath}`)
-  const res2 = transformModule(res)
   indexModule.testString = res
-  indexModule.testString2 = res2
   return JSON.stringify(indexModule)
 }
 

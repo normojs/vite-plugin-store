@@ -12,7 +12,7 @@ import deepEqual from 'deep-equal'
 import { Route, ResolvedOptions, PageDirOptions, Store, Module, ModuleOptions } from './types'
 import { debug, isDynamicRoute, isCatchAllRoute, normalizePath, findRouteByFilename } from './utils'
 import { stringifyRoutes, stringifyStores } from './stringify'
-import { parseCustomBlock, parseSFC } from './parseSfc'
+// import { parseCustomBlock, parseSFC } from './parseSfc'
 
 /**
  * TODO 处理文件内容，参考: vite-plugin-components
@@ -44,7 +44,7 @@ export function generateModuleOptions(filesPath: string[], storeDir: string, opt
     // undefined(module) | 'index' | 'getters' | 'mutations'
     const moduleInType = temps[1] || 'module'
     const componentPath = `/${storeDir}/${filePath}`
-    console.log('====:', { resolvedPath, moduleName, moduleInType, componentPath, filePath })
+    // console.log('====:', { resolvedPath, moduleName, moduleInType, componentPath, filePath })
     moduleOptions.push({ root: options.root, resolvedPath, moduleName, moduleInType, componentPath, filePath })
     // 这个是store/index.[js,ts]
     if (moduleName === 'index' && moduleInType === 'module') {
@@ -78,7 +78,7 @@ export function generateModuleOptions(filesPath: string[], storeDir: string, opt
 export function generateClientCode(moduleOptions: ModuleOptions[], options: ResolvedOptions) {
   // TODO 根据moduleOptions生成代码
 
-  console.log('moduleOptions ；', moduleOptions)
+  // console.log('moduleOptions ；', moduleOptions)
   const stringStores = stringifyStores(moduleOptions, options)
 
   return `export default ${stringStores}`
@@ -89,18 +89,18 @@ export function generateClientCode(moduleOptions: ModuleOptions[], options: Reso
 
 // =====================================
 export function updateRouteFromHMR(content: string, filename: string, routes: Route[], options: ResolvedOptions): boolean {
-  const parsed = parseSFC(content)
-  const routeBlock = parsed.customBlocks.find(b => b.type === 'route')
-  if (routeBlock) {
-    const route = findRouteByFilename(routes, filename)
+  // const parsed = parseSFC(content)
+  // const routeBlock = parsed.customBlocks.find(b => b.type === 'route')
+  // if (routeBlock) {
+  //   const route = findRouteByFilename(routes, filename)
 
-    if (route) {
-      const before = Object.assign({}, route)
-      const customBlockContent = parseCustomBlock(routeBlock, filename, options)
-      debug.hmr('custom block: %O', customBlockContent)
-      Object.assign(route, customBlockContent)
-      return !deepEqual(before, route)
-    }
-  }
+  //   if (route) {
+  //     const before = Object.assign({}, route)
+  //     const customBlockContent = parseCustomBlock(routeBlock, filename, options)
+  //     debug.hmr('custom block: %O', customBlockContent)
+  //     Object.assign(route, customBlockContent)
+  //     return !deepEqual(before, route)
+  //   }
+  // }
   return false
 }

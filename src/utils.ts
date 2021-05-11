@@ -10,10 +10,12 @@ export function normalizePath(str: string): string {
 }
 
 export const debug = {
-  // 热加载
-  hmr: Debug('vite-plugin-store:hmr'),
   // 代码生成
   gen: Debug('vite-plugin-store:gen'),
+  // transform
+  transform: Debug('vite-plugin-store:transform'),
+  // 热加载
+  hmr: Debug('vite-plugin-store:hmr'),
 }
 
 const dynamicRouteRE = /^\[.+\]$/
