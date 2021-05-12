@@ -68,9 +68,11 @@ importers:
       vite-plugin-store: workspace:*
       vue: ^3.0.9
       vue-router: 4.0.5
+      vuex: 4.0.0
     dependencies:
       vue: 3.0.9
       vue-router: 4.0.5_vue@3.0.9
+      vuex: 4.0.0_vue@3.0.9
     devDependencies:
       '@vitejs/plugin-vue': 1.2.0_@vue+compiler-sfc@3.0.9
       '@vue/compiler-sfc': 3.0.9_vue@3.0.9
@@ -6204,6 +6206,14 @@ packages:
       '@vue/compiler-dom': 3.0.9
       '@vue/runtime-dom': 3.0.9
       '@vue/shared': 3.0.9
+    dev: false
+
+  /vuex/4.0.0_vue@3.0.9:
+    resolution: {integrity: sha512-56VPujlHscP5q/e7Jlpqc40sja4vOhC4uJD1llBCWolVI8ND4+VzisDVkUMl+z5y0MpIImW6HjhNc+ZvuizgOw==}
+    peerDependencies:
+      vue: ^3.0.2
+    dependencies:
+      vue: 3.0.9
     dev: false
 
   /w3c-hr-time/1.0.2:

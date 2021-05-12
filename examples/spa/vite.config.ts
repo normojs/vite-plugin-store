@@ -21,6 +21,7 @@ const config = defineConfig({
       extensions: ['ts', 'js'],
       syncIndex: false,
       replaceSquareBrackets: true,
+
     }),
     Markdown(),
     Restart({

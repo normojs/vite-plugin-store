@@ -6,7 +6,7 @@
   "module": "dist/index.mjs",
   "types": "index.d.ts",
   "license": "MIT",
-  "author": "hannoeru <me@hanlee.co>",
+  "author": "复数十六 <normojs@qq.com>",
   "repository": {
     "type": "git",
     "url": "https://github.com/normojs/vite-plugin-store.git"
@@ -23,7 +23,7 @@
     "build": "tsup src/index.ts --dts --format cjs,esm",
     "prepublishOnly": "npm run build",
     "release": "npx git-ensure -a && npx bumpp --commit --tag --push",
-    "dev:example": "npm -C  examples/spa run dev",
+    "example:dev": "npm -C  examples/spa run dev",
     "example:build": "npm -C examples/spa run build",
     "example:serve": "npm -C examples/spa run serve",
     "test": "jest",
