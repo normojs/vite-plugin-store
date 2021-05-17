@@ -6,8 +6,7 @@ import { generateModuleOptions, generateClientCode, updateRouteFromHMR } from '.
 import { debug, normalizePath } from './utils'
 import { parseVueRequest } from './query'
 import { resolveOptions } from './options'
-
-const MODULE_ID = 'vite-plugin-store'
+import { MODULE_IDS, MODULE_ID_VIRTUAL } from './constants'
 
 function storePlugin(userOptions: UserOptions = {}): Plugin {
   let config: ResolvedConfig | undefined
@@ -24,21 +23,22 @@ function storePlugin(userOptions: UserOptions = {}): Plugin {
   const options: ResolvedOptions = resolveOptions(userOptions)
 
   return {
-    name: MODULE_ID,
-    // enforce: 'pre',
-    enforce: 'post',
+    name: 'vite-plugin-store',
+    enforce: 'pre',
+    // enforce: 'post',
     configResolved(_config) {
       config = _config
       // debug.gen('config: %O', config)
       options.root = config.root
     },
     resolveId(id) {
-      console.log('MODULE_ID === id ', id)
-      return MODULE_ID === id ? MODULE_ID : null
+      return MODULE_IDS.includes(id) || MODULE_IDS.some(i => id.startsWith(i))
+        ? MODULE_ID_VIRTUAL
+        : null
     },
     async load(id) {
       debug.gen('load: %O', id)
-      if (id === MODULE_ID) {
+      if (id === MODULE_ID_VIRTUAL) {
         if (!generatedStores) {
           generatedStores = []
           generatedStore = { strict: true }
@@ -115,7 +115,7 @@ function storePlugin(userOptions: UserOptions = {}): Plugin {
 
         if (needReload) {
           const { moduleGraph } = server
-          const module = moduleGraph.getModuleById(MODULE_ID)
+          const module = moduleGraph.getModuleById(MODULE_ID_VIRTUAL)
           if (module)
             server.moduleGraph.invalidateModule(module)
 
