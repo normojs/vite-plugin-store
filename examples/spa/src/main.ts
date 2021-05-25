@@ -3,9 +3,13 @@ import { createApp } from 'vue'
 
 import { createStore } from 'vuex'
 import store from 'virtual:generated-store'
+import store2 from './store2/index.js'
 // import routes from 'virtual:generated-pages'
 import App from './App.vue'
 import './index.css'
+
+console.log('store: ', store)
+console.log('store2: ', store2)
 
 createStore(store)
 const app = createApp(App)

@@ -6,9 +6,18 @@ import { ResolvedOptions, ModuleOptions, Route } from './types'
 import { buildModule, transformModule } from './build'
 /**
  * 创建一个字符串化的Vuex Store定义。
+ * Store{}
+ * {
+ *  strict: true,
+ *  state: ...
+ *  getters: ...
+ *  modules:{
+ *
+ *  }
+ * }
  */
 export function stringifyStores(moduleOptions: ModuleOptions[], options: ResolvedOptions) {
-  // TODO 循环处理
+  // TODO: 循环处理
   // let result = ''
   const indexModule: any = { strict: true, moduleOptions }
   for (const i in moduleOptions) {
@@ -17,9 +26,9 @@ export function stringifyStores(moduleOptions: ModuleOptions[], options: Resolve
     indexModule[name] = module
   }
 
-  // TODO 处理
+  // TODO: 处理
 
-  // TODO 从string中取出结果
+  // TODO: 从string中取出结果
   const res = buildModule(`${moduleOptions[0].root}${moduleOptions[0].componentPath}`)
   indexModule.testString = res
   return JSON.stringify(indexModule)
@@ -28,7 +37,7 @@ export function stringifyStores(moduleOptions: ModuleOptions[], options: Resolve
 export function stringifyStore(moduleOptions: ModuleOptions, options: ResolvedOptions) {
   const module = {}
 
-  // TODO 使用esbuild
+  // TODO: 使用esbuild
 
   return { name: moduleOptions.moduleName, module }
 }

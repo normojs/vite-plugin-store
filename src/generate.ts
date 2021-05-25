@@ -68,7 +68,7 @@ export function generateModuleOptions(filesPath: string[], storeDir: string, opt
     // console.log('====:', resolvedPath, moduleName, moduleInType, componentPath)
   }// end for
 
-  // TODO 处理store：工作空间、严格模式、
+  // TODO: 处理store：工作空间、严格模式、
   return moduleOptions
 }
 
@@ -76,7 +76,7 @@ export function generateModuleOptions(filesPath: string[], storeDir: string, opt
  * TODO 生成数据
  */
 export function generateClientCode(moduleOptions: ModuleOptions[], options: ResolvedOptions) {
-  // TODO 根据moduleOptions生成代码
+  // TODO: 根据moduleOptions生成代码
 
   // console.log('moduleOptions ；', moduleOptions)
   const stringStores = stringifyStores(moduleOptions, options)
@@ -89,18 +89,5 @@ export function generateClientCode(moduleOptions: ModuleOptions[], options: Reso
 
 // =====================================
 export function updateRouteFromHMR(content: string, filename: string, routes: Route[], options: ResolvedOptions): boolean {
-  // const parsed = parseSFC(content)
-  // const routeBlock = parsed.customBlocks.find(b => b.type === 'route')
-  // if (routeBlock) {
-  //   const route = findRouteByFilename(routes, filename)
-
-  //   if (route) {
-  //     const before = Object.assign({}, route)
-  //     const customBlockContent = parseCustomBlock(routeBlock, filename, options)
-  //     debug.hmr('custom block: %O', customBlockContent)
-  //     Object.assign(route, customBlockContent)
-  //     return !deepEqual(before, route)
-  //   }
-  // }
   return false
 }

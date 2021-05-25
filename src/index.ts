@@ -44,15 +44,12 @@ function storePlugin(userOptions: UserOptions = {}): Plugin {
           generatedStore = { strict: true }
           filesPath = []
           const storeDirPath = normalizePath(resolve(options.root, options.storeDir))
-          // debug.gen('dir: %O', storeDirPath)
           // 相对路径数组
           const files = await getFilesFromPath(storeDirPath, options)
-          // debug.gen('files: %O', files)
           moduleOptions = generateModuleOptions(files, options.storeDir, options)
         }
-        // debug.gen('moduleOptions: %O', moduleOptions)
 
-        // TODO 生成code
+        // TODO: 生成code
         const clientCode = generateClientCode(moduleOptions, options)
 
         return clientCode

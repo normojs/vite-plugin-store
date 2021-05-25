@@ -1,3 +1,5 @@
+export const namespaced = true
+
 // 使state.ts失效
 export const state = () => {
   return {
@@ -6,12 +8,6 @@ export const state = () => {
     token: null,
   }
 }
-// ？？为什么使用方法
-// export const state = {
-//   path: '/user',
-//   info: 'File system based vuex plugin for Vite',
-//   token: null,
-// }
 
 // 使mutations.ts失效
 export const mutations = {
