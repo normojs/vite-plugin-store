@@ -37,7 +37,10 @@ function storePlugin(userOptions: UserOptions = {}): Plugin {
         : null
     },
     async load(id) {
-      debug.gen('load: %O', id)
+      // debug.gen('load: %O', id)
+      if (id && id.includes('utils/cache'))
+        console.log('============:', id)
+
       if (id === MODULE_ID_VIRTUAL) {
         if (!generatedStores) {
           generatedStores = []

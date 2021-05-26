@@ -81,10 +81,8 @@ export function generateClientCode(moduleOptions: ModuleOptions[], options: Reso
   // console.log('moduleOptions ；', moduleOptions)
   const stringStores = stringifyStores(moduleOptions, options)
 
+  // return `${JSON.stringify(JSON.parse(stringStores).testString.text)}`
   return `export default ${stringStores}`
-  // const { imports, stringRoutes } = stringifyRoutes(routes, options)
-
-  // return `${imports.join('\n')}\n\nconst routes = ${stringRoutes}\n\nexport default routes`
 }
 
 // =====================================

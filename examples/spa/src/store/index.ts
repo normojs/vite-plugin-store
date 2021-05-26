@@ -1,7 +1,7 @@
-// import { cacheGet, cacheSet } from '@/utils.js|.ts'
+import { cacheGet } from '@/utils/cache'
 
 // 严格模式，默认true
-export const strict = false
+export const strict = cacheGet()
 // 插件地址，默认：plugins
 export const pluginDir = 'plugins'
 export const state = () => {

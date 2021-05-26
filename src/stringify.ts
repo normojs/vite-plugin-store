@@ -17,19 +17,20 @@ import { buildModule, transformModule } from './build'
  * }
  */
 export function stringifyStores(moduleOptions: ModuleOptions[], options: ResolvedOptions) {
-  // TODO: 循环处理
   // let result = ''
-  const indexModule: any = { strict: true, moduleOptions }
+  const indexModule: any = { strict: true, moduleOptions, modules: {} }
   for (const i in moduleOptions) {
-    //
+    /*
+      TODO: 处理每个模块：返回
+      1、
+
+    */
     const { name, module } = stringifyStore(moduleOptions[i], options)
-    indexModule[name] = module
+    indexModule.modules[name] = module
   }
 
-  // TODO: 处理
-
   // TODO: 从string中取出结果
-  const res = buildModule(`${moduleOptions[0].root}${moduleOptions[0].componentPath}`)
+  const res = buildModule(`${moduleOptions[1].root}${moduleOptions[1].componentPath}`)
   indexModule.testString = res
   return JSON.stringify(indexModule)
 }
