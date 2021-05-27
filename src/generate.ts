@@ -6,14 +6,13 @@
  * https://github.com/brattonross/vite-plugin-voie/blob/main/LICENSE
  */
 
-import fs from 'fs'
-import { join } from 'path'
-import deepEqual from 'deep-equal'
 import { Route, ResolvedOptions, PageDirOptions, Store, Module, ModuleOptions } from './types'
-import { debug, isDynamicRoute, isCatchAllRoute, normalizePath, findRouteByFilename } from './utils'
-import { stringifyRoutes, stringifyStores } from './stringify'
+import { debug, normalizePath, pathsToTree } from './utils'
+import { stringifyStores } from './stringify'
 // import { parseCustomBlock, parseSFC } from './parseSfc'
 
+const subStoreExtensions = ['index', 'getters', 'actions', 'mutations', 'state']
+type ModuleOptionsMap = Record<string, ModuleOptions>
 /**
  * TODO 处理文件内容，参考: vite-plugin-components
  * 处理严格模式、工作空间
@@ -25,50 +24,47 @@ import { stringifyRoutes, stringifyStores } from './stringify'
  * @param {ResolvedOptions} options
  * @return {*}  {Store}
  */
-export function generateModuleOptions(filesPath: string[], storeDir: string, options: ResolvedOptions): ModuleOptions[] {
+export function generateModuleOptions(filePaths: string[], storeDir: string, options: ResolvedOptions): ModuleOptions[] {
   // console.log(filesPath, storeDir, options)
   const {
     extensionsRE,
     root,
   } = options
-  const store: Store = { strict: true }
 
   const moduleOptions: ModuleOptions[] = []
-  for (const filePath of filesPath) {
+  const map = {}
+  const moduleOptionsMap: ModuleOptionsMap = {}
+
+  for (const filePath of filePaths) {
     // 去除后缀
     const resolvedPath = filePath.replace(extensionsRE, '')
     // resolvedPath: 'index' | 'user/index' | 'user/getters' | 'user/mutations'
     const temps = resolvedPath.split('/')
-    // 'index' | 'user' | 'user' | 'user'
-    const moduleName = temps[0]
-    // undefined(module) | 'index' | 'getters' | 'mutations'
-    const moduleInType = temps[1] || 'module'
-    const componentPath = `/${storeDir}/${filePath}`
-    // console.log('====:', { resolvedPath, moduleName, moduleInType, componentPath, filePath })
-    moduleOptions.push({ root: options.root, resolvedPath, moduleName, moduleInType, componentPath, filePath })
-    // 这个是store/index.[js,ts]
-    if (moduleName === 'index' && moduleInType === 'module') {
-      // TODO  处理store
-      // store
-      store.name = 'index'
-      store.path = componentPath
 
-      // TODO 处理index.ts或index.js
-      // TODO 处理ts
-      continue
+    // temp[0] => 'index' | 'user' | 'user' | 'user'
+    let moduleName = temps[0]
+    // temp[1] => | 'index' | 'getters' | 'mutations'
+    let moduleInType = temps[1] || 'module'
+
+    if (moduleName === 'plugins') {
+      // 处理插件
+      [moduleName, moduleInType] = [moduleInType, moduleName]
     }
+    else if (temps.length > 2) {
+      // 处理多级module
+      moduleInType = temps.pop() || 'undefined'
+      moduleName = temps.join('/') || ''
+      if (!subStoreExtensions.includes(moduleInType) || !moduleName) {
+        // 如果子模块类型错误，则忽略
+        continue
+      }
+    }
+    const componentPath = `/${storeDir}/${filePath}`
+    // moduleOptionsMap
 
-    // TODO 获取module：工作空间、别名
-
-    /*
-       TODO
-       判断index里是否有getters、mutations、actions等，如果有，则忽略目录下的getters等文件
-       以index中为准
-    */
-    // console.log('====:', resolvedPath, moduleName, moduleInType, componentPath)
+    moduleOptions.push({ root: options.root, resolvedPath, moduleName, moduleInType, componentPath, filePath })
   }// end for
 
-  // TODO: 处理store：工作空间、严格模式、
   return moduleOptions
 }
 

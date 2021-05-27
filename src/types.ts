@@ -26,6 +26,7 @@ export interface Module {
   getters: Object
 }
 
+// TODO: 改为ModuleOption
 export interface ModuleOptions {
   // root
   root: string
@@ -39,6 +40,7 @@ export interface ModuleOptions {
   componentPath: string
   // e.g 'user/mutations.ts' | 'user/index.ts'
   filePath: string
+  moduleOptions?: ModuleOptions[]
 }
 
 /**

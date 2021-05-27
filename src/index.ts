@@ -63,19 +63,21 @@ function storePlugin(userOptions: UserOptions = {}): Plugin {
 
       // if (id === 'vite-plugin-store')
       debug.transform('id: %O', id)
-      const s = 'App.vue'
-      if (id.endsWith(s))
-        console.log(`code: ${s} \n`, code, '\n\n')
+      // const s = 'App.vue'
+      // if (id.endsWith(s))
+      // console.log(`code: ${s} \n`, code, '\n\n')
       // console.log('dd', id)
 
       // return null
 
-      if (query && query.vue && query.type === 'route') {
-        return {
-          code: 'export default {}',
-          map: null,
-        }
-      }
+      // {
+      //   if (query && query.vue && query.type === 'route') {
+      //     return {
+      //       code: 'export default {}',
+      //       map: null,
+      //     }
+      //   }
+      // }
       return {
         code,
         // TODO source-map

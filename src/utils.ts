@@ -21,16 +21,20 @@ export const debug = {
 const dynamicRouteRE = /^\[.+\]$/
 export const nuxtDynamicRouteRE = /^_[\s\S]*$/
 
-export function isDynamicRoute(routePath: string, nuxtStyle: Boolean = false) {
-  return nuxtStyle
-    ? nuxtDynamicRouteRE.test(routePath)
-    : dynamicRouteRE.test(routePath)
-}
+export function pathsToTree(paths: string[]) {
+  const result: Object[] = []
+  const level = { result }
 
-export function isCatchAllRoute(routePath: string, nuxtStyle: Boolean = false) {
-  return nuxtStyle
-    ? /^_$/.test(routePath)
-    : /^\[\.{3}/.test(routePath)
+  paths.forEach((path) => {
+    path.split('/').reduce((r: any, name, i, a) => {
+      if (!r[name]) {
+        r[name] = { result: [] }
+        r.result.push({ name, children: r[name].result })
+      }
+      return r[name]
+    }, level)
+  })
+  return result
 }
 
 export function resolveImportMode(
@@ -48,18 +52,4 @@ export function resolveImportMode(
 
 export function pathToName(filepath: string) {
   return filepath.replace(/[_.\-\\/]/g, '_').replace(/[[:\]()]/g, '$')
-}
-
-export function findRouteByFilename(routes: Route[], filename: string): Route | null {
-  let result = null
-  for (const route of routes) {
-    if (filename.endsWith(route.component))
-      result = route
-
-    if (!result && route.children)
-      result = findRouteByFilename(route.children, filename)
-
-    if (result) return result
-  }
-  return null
 }
