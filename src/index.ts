@@ -2,7 +2,7 @@ import { resolve, basename } from 'path'
 import type { Plugin, ResolvedConfig, ModuleNode } from 'vite'
 import { Route, ResolvedOptions, UserOptions, ModuleOptions, Store } from './types'
 import { getFilesFromPath } from './files'
-import { generateModuleOptions, generateClientCode, updateRouteFromHMR } from './generate'
+import { generateOptions, generateClientCode, updateRouteFromHMR } from './generate'
 import { debug, normalizePath } from './utils'
 import { parseVueRequest } from './query'
 import { resolveOptions } from './options'
@@ -48,8 +48,9 @@ function storePlugin(userOptions: UserOptions = {}): Plugin {
           filesPath = []
           const storeDirPath = normalizePath(resolve(options.root, options.storeDir))
           // 相对路径数组
-          const files = await getFilesFromPath(storeDirPath, options)
-          moduleOptions = generateModuleOptions(files, options.storeDir, options)
+          const filePaths = await getFilesFromPath(storeDirPath, options)
+          const storeOptions = generateOptions(filePaths, options.storeDir, options)
+          moduleOptions = storeOptions.moduleOptions
         }
 
         // TODO: 生成code

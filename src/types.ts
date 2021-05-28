@@ -43,6 +43,15 @@ export interface ModuleOptions {
   moduleOptions?: ModuleOptions[]
 }
 
+export interface PluginOption {
+  resolvedPath: string
+  pluginName: string
+  // e.g '/src/store/user/mutations.ts' | '/src/store/user/index.ts'
+  componentPath: string
+  // e.g 'user/mutations.ts' | 'user/index.ts'
+  filePath: string
+}
+
 /**
  *
  *
