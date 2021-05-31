@@ -51,6 +51,8 @@ function storePlugin(userOptions: UserOptions = {}): Plugin {
           const filePaths = await getFilesFromPath(storeDirPath, options)
           const storeOptions = generateOptions(filePaths, options.storeDir, options)
           moduleOptions = storeOptions.moduleOptions
+          // TODO: 插件
+          // pluginOptions = storeOptions.pluginOptions
         }
 
         // TODO: 生成code
