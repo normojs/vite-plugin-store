@@ -6,8 +6,10 @@
  * https://github.com/brattonross/vite-plugin-voie/blob/main/LICENSE
  */
 
+// TODO: https://www.npmjs.com/package/array-starts-with
+// https://github.com/tunnckocore/starts-with
 import { Route, ResolvedOptions, PageDirOptions, Store, Module, ModuleOptions, PluginOption } from './types'
-import { debug, normalizePath } from './utils'
+import { debug, normalizePath, moduleName2InName } from './utils'
 // import { stringifyStores } from './stringify'
 // import { parseCustomBlock, parseSFC } from './parseSfc'
 
@@ -55,7 +57,7 @@ export function generateOptions(filePaths: string[], storeDir: string, options: 
       pluginOptions.push({ resolvedPath, pluginName: moduleName, componentPath, filePath })
       continue
     }
-    else if(temps.length == 1 && subStoreExtensions.includes(temps[0])){
+    else if (temps.length === 1 && subStoreExtensions.includes(temps[0])) {
       // store/[actions, getters]
       moduleInType = moduleName
       moduleName = 'index'
@@ -91,31 +93,61 @@ export function generateOptions(filePaths: string[], storeDir: string, options: 
  * }
  */
 export function generateClientCode(moduleOptions: ModuleOptions[], options: ResolvedOptions) {
-  const rootModule: any = { strict: true, moduleOptions, imports: [], modules: {} }
+  const rootModule: any = { strict: true, moduleOptions, modules: {}, imports: [] }
 
   const fileSystemTree: any = {
     // 'name': result
   }
+
   const moduleOptionsMap: any = {}
-  moduleOptions.map((item: ModuleOptions)=>{
+  moduleOptions.forEach((item: ModuleOptions) => {
     moduleOptionsMap[item.moduleName] = item
   })
-  // 保证key的顺序
-  let keys = Object.keys(moduleOptionsMap).sort()
 
-  for(let key of keys){
-    let moduleOption = moduleOptionsMap[key]
-    if(fileSystemTree[moduleOption.moduleName]){
-      fileSystemTree[moduleOption.moduleName].imports.push(moduleOption)
-    }else{
-      // TODO: modules
-      fileSystemTree[moduleOption.moduleName] = {}
-      fileSystemTree[moduleOption.moduleName].imports = [moduleOption]
+  // for (const moduleName of moduleNames) {
+  for (const index in moduleOptions) {
+    const moduleOption = moduleOptions[index]
+    const moduleName: string = moduleOption.moduleName
+
+    // const moduleOption = moduleOptionsMap[moduleName]
+    if (fileSystemTree[moduleName]) {
+      fileSystemTree[moduleName].imports.push(moduleOption)
+      // fileSystemTree[parentModuleName].modules
+    }
+    else {
+      fileSystemTree[moduleName] = {}
+      fileSystemTree[moduleName].imports = [moduleOption]
+    }
+  }// end for
+  // 【重点】 保证key的顺序
+  const moduleNames = Object.keys(moduleOptionsMap).sort()
+  const xx = []
+  for (const moduleName of moduleNames) {
+    const singleModule = fileSystemTree[moduleName]
+    const { name, imports, module } = generateSingleModule(singleModule, options)
+    xx.push(...imports)
+
+    //
+    const splitKeys = moduleName.split('/')
+
+    // 上一级module name
+    let parentModuleName = ''
+    if (splitKeys.length >= 2)
+      parentModuleName = splitKeys.join('/')
+    // TODO: 如果有parentModule，则不设置
+    if (parentModuleName && fileSystemTree[parentModuleName]) {
+      // 存在父module，把当前设置到父modules中
+      // fileSystemTree[parentModuleName].modules || fileSystemTree[parentModuleName].modules
+    }
+    else {
+      // 不存在父module，即：一级module
+      // rootModule.modules
     }
   }
 
-  rootModule.keys = keys
+  rootModule.moduleNames = moduleNames
   rootModule.tree = fileSystemTree
+  rootModule.xx = xx
 
   /*
     import _user_actions from 'user/actions'
@@ -124,25 +156,19 @@ export function generateClientCode(moduleOptions: ModuleOptions[], options: Reso
     import _user_state from 'user/state'
     import _user_index from 'user/index'
     // 判断是否为空，按需拼接
-      let _user_module = {
-        ..._user_index, 
-        state: _user_state, 
-        mutations: ..._user_mutations, 
-        getters: ..._user_getters, 
-        actions: ..._user_actions,
-        modules: {...}
-      }
+    let _user_module = {
+      ..._user_index,
+      state: _user_state,
+      mutations: ..._user_mutations,
+      getters: ..._user_getters,
+      actions: ..._user_actions,
+      modules: {...}
+    }
     */
-
 
   // TODO: 生成全部的code
 
   // rootModule.xx = moduleOptionsMap
-
-
-
-
-  
 
   // const { name, imports } = generateModule(moduleOptionTree, options)
 
@@ -152,38 +178,38 @@ export function generateClientCode(moduleOptions: ModuleOptions[], options: Reso
   return `export default ${JSON.stringify(rootModule)}`
 }
 
-export function generateModule(fileSystemTree: any[], options: ResolvedOptions) {
-  /*
-  import _user_actions from 'user/actions'
-  import _user_getters from 'user/getters'
-  import _user_mutations from 'user/mutations'
-  import _user_state from 'user/state'
-  import _user_index from 'user/index'
-  // 判断是否为空，按需拼接
-  let _user_module = {
-    ..._user_index, 
-    state: _user_state, 
-    mutations: ..._user_mutations, 
-    getters: ..._user_getters, 
-    actions: ..._user_actions,
-    modules: {...}
-  }
-  */
- const imports = []
- let module = {}
-//  const modules = {name: imports: [], modules: []}
-const results = {
-  // 'name': result
+interface SingleModule {
+  name: string
+  imports: string[]
+  // TODO: 类型
+  module: Object
 }
-  const result = {
+
+export function generateSingleModule(singleModule: any, options: ResolvedOptions) {
+  /*
+    import _user_actions from 'user/actions'
+    import _user_getters from 'user/getters'
+    import _user_mutations from 'user/mutations'
+    import _user_state from 'user/state'
+    import _user_index from 'user/index'
+    // 判断是否为空，按需拼接
+    let _user_module = {
+      ..._user_index,
+      state: _user_state,
+      mutations: ..._user_mutations,
+      getters: ..._user_getters,
+      actions: ..._user_actions,
+      // modules: {...}
+    }
+  */
+  const result: SingleModule = {
     name: '',
     imports: [],
-    modules: []
+    module: {},
   }
-
-  // TODO: 遍历树，从子节点开始生成code
-  // 同级 inmodule
-
+  singleModule.imports.forEach((item: any) => {
+    result.imports.push(`import * as ${moduleName2InName(`${item.moduleName}__${item.moduleInType}`)} from '${item.filePath}'`)
+  })
 
   return result
 }
@@ -194,6 +220,7 @@ const results = {
  * @export
  * @param {string[]} paths
  * @return {*}
+ * @deprecated
  */
 export function pathsToTree(moduleOptions: ModuleOptions[]) {
   const moduleOptionsMap: any = {}
@@ -217,7 +244,6 @@ export function pathsToTree(moduleOptions: ModuleOptions[]) {
   })
   return result
 }
-
 
 // =====================================
 export function updateRouteFromHMR(content: string, filename: string, routes: Route[], options: ResolvedOptions): boolean {

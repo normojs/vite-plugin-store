@@ -1,6 +1,14 @@
 import Debug from 'debug'
 import { ResolvedOptions, Route } from './types'
 
+export function moduleName2InName(moduleName: string) {
+  return `_${moduleName.replace(/\//g, '_')}`
+}
+
+export function isSubModule(parentModuleName: string, subModuleName: string) {
+  return false
+}
+
 export function extensionsToGlob(extensions: string[]) {
   return extensions.length > 1 ? `{${extensions.join(',')}}` : extensions[0] || ''
 }
