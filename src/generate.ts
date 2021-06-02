@@ -95,37 +95,40 @@ export function generateOptions(filePaths: string[], storeDir: string, options: 
 export function generateClientCode(moduleOptions: ModuleOptions[], options: ResolvedOptions) {
   const rootModule: any = { strict: true, moduleOptions, modules: {}, imports: [] }
 
-  const fileSystemTree: any = {
-    // 'name': result
-  }
-
   const moduleOptionsMap: any = {}
   moduleOptions.forEach((item: ModuleOptions) => {
     moduleOptionsMap[item.moduleName] = item
   })
 
-  // for (const moduleName of moduleNames) {
+  const fileSystemTree: any = {
+    // 'name': result
+  }
   for (const index in moduleOptions) {
     const moduleOption = moduleOptions[index]
     const moduleName: string = moduleOption.moduleName
-
-    // const moduleOption = moduleOptionsMap[moduleName]
     if (fileSystemTree[moduleName]) {
       fileSystemTree[moduleName].imports.push(moduleOption)
-      // fileSystemTree[parentModuleName].modules
     }
     else {
-      fileSystemTree[moduleName] = {}
+      fileSystemTree[moduleName] = { moduleName: moduleOption.moduleName }
       fileSystemTree[moduleName].imports = [moduleOption]
     }
   }// end for
+
   // 【重点】 保证key的顺序
   const moduleNames = Object.keys(moduleOptionsMap).sort()
+  moduleNames.reverse()
+
   const xx = []
+  const xx2 = []
+  const xx3 = []
+
   for (const moduleName of moduleNames) {
     const singleModule = fileSystemTree[moduleName]
-    const { name, imports, module } = generateSingleModule(singleModule, options)
+    const { moduleInName, imports, modules } = generateSingleModule(singleModule, options)
     xx.push(...imports)
+    xx2.push(...modules)
+    xx3.push(moduleInName)
 
     //
     const splitKeys = moduleName.split('/')
@@ -148,6 +151,8 @@ export function generateClientCode(moduleOptions: ModuleOptions[], options: Reso
   rootModule.moduleNames = moduleNames
   rootModule.tree = fileSystemTree
   rootModule.xx = xx
+  rootModule.xx2 = xx2
+  rootModule.xx3 = xx3
 
   /*
     import _user_actions from 'user/actions'
@@ -178,11 +183,13 @@ export function generateClientCode(moduleOptions: ModuleOptions[], options: Reso
   return `export default ${JSON.stringify(rootModule)}`
 }
 
-interface SingleModule {
-  name: string
+interface ResultSingleModule {
+  // 如：'user/role/menu' 取 'menu'
+  moduleInName: string
   imports: string[]
   // TODO: 类型
-  module: Object
+  modules: string[]
+  out: any
 }
 
 export function generateSingleModule(singleModule: any, options: ResolvedOptions) {
@@ -199,17 +206,36 @@ export function generateSingleModule(singleModule: any, options: ResolvedOptions
       mutations: ..._user_mutations,
       getters: ..._user_getters,
       actions: ..._user_actions,
-      // modules: {...}
+
+      modules: {
+      'role': _user_role,
+      'element': _user_element
+      }
+
     }
   */
-  const result: SingleModule = {
-    name: '',
+  const result: ResultSingleModule = {
+    moduleInName: '',
     imports: [],
-    module: {},
+    modules: [],
+    out: {},
   }
+  result.moduleInName = singleModule.moduleName.split('/').pop()
+  result.out.moduleVariableName = `${moduleName2InName(singleModule.moduleName)}__module`
+  result.modules.push(`let _${result.out.moduleVariableName} = {`)
+
   singleModule.imports.forEach((item: any) => {
-    result.imports.push(`import * as ${moduleName2InName(`${item.moduleName}__${item.moduleInType}`)} from '${item.filePath}'`)
+    const importName = moduleName2InName(`${item.moduleName}__${item.moduleInType}`)
+    if (item.moduleName === 'index')
+      result.modules.push(`...${importName},`)
+
+    else if (subStoreExtensions.includes(item.moduleInType))
+      result.modules.push(`${item.moduleInType}: ...${importName},`)
+
+    result.imports.push(`import * as ${importName} from '${item.filePath}'`)
   })
+
+  result.modules.push('}')
 
   return result
 }
