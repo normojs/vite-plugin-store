@@ -93,149 +93,104 @@ export function generateOptions(filePaths: string[], storeDir: string, options: 
  * }
  */
 export function generateClientCode(moduleOptions: ModuleOptions[], options: ResolvedOptions) {
-  const rootModule: any = { strict: true, moduleOptions, modules: {}, imports: [] }
+  const root: any = { moduleOptions, modules: {} }
 
-  const moduleOptionsMap: any = {}
-  moduleOptions.forEach((item: ModuleOptions) => {
-    moduleOptionsMap[item.moduleName] = item
-  })
-
-  const fileSystemTree: any = {
+  const moduleOptionTree: any = {
     // 'name': result
   }
   for (const index in moduleOptions) {
     const moduleOption = moduleOptions[index]
     const moduleName: string = moduleOption.moduleName
-    if (fileSystemTree[moduleName]) {
-      fileSystemTree[moduleName].imports.push(moduleOption)
+    if (moduleOptionTree[moduleName]) {
+      moduleOptionTree[moduleName].imports.push(moduleOption)
     }
     else {
-      fileSystemTree[moduleName] = { moduleName: moduleOption.moduleName }
-      fileSystemTree[moduleName].imports = [moduleOption]
+      moduleOptionTree[moduleName] = { moduleName: moduleOption.moduleName }
+      moduleOptionTree[moduleName].imports = [moduleOption]
     }
-  }// end for
+  }// end for(moduleOptions)
 
-  // 【重点】 保证key的顺序
-  const moduleNames = Object.keys(moduleOptionsMap).sort()
+  // 确保moduleName的顺序为倒叙，先处理 sub module
+  const moduleNames = Object.keys(moduleOptionTree).sort()
   moduleNames.reverse()
 
-  const xx = []
-  const xx2 = []
-  const xx3 = []
-
   for (const moduleName of moduleNames) {
-    const singleModule = fileSystemTree[moduleName]
-    const { moduleInName, imports, modules } = generateSingleModule(singleModule, options)
-    xx.push(...imports)
-    xx2.push(...modules)
-    xx3.push(moduleInName)
+    if (!root.modules[moduleName]) {
+      root.modules[moduleName] = {
+        imports: [],
+        variables: [],
+        inmodules: [],
+      }
+    }// end if
 
-    //
+    const singleModule = moduleOptionTree[moduleName]
+    const { moduleInName, imports, variables, out } = generateSingleModule(singleModule, options)
+    root.modules[moduleName].variableName = out.variableName
+    root.modules[moduleName].moduleInName = moduleInName
+    root.modules[moduleName].imports.push(...imports)
+    root.modules[moduleName].variables.push(...variables)
     const splitKeys = moduleName.split('/')
 
-    // 上一级module name
-    let parentModuleName = ''
-    if (splitKeys.length >= 2)
-      parentModuleName = splitKeys.join('/')
-    // TODO: 如果有parentModule，则不设置
-    if (parentModuleName && fileSystemTree[parentModuleName]) {
-      // 存在父module，把当前设置到父modules中
-      // fileSystemTree[parentModuleName].modules || fileSystemTree[parentModuleName].modules
-    }
-    else {
-      // 不存在父module，即：一级module
-      // rootModule.modules
-    }
-  }
+    if (splitKeys.length >= 2) {
+      splitKeys.pop()
+      // 上一级module name
+      const parentModuleName = splitKeys.join('/')
+      if (!root.modules[parentModuleName]) {
+        root.modules[parentModuleName] = {
+          imports: [],
+          variables: [],
+          inmodules: [],
+        }
+      }// end if
 
-  rootModule.moduleNames = moduleNames
-  rootModule.tree = fileSystemTree
-  rootModule.xx = xx
-  rootModule.xx2 = xx2
-  rootModule.xx3 = xx3
+      root.modules[parentModuleName].inmodules.push(`${moduleInName}: ${out.variableName}`)
+    }// end if
+  }// end for(moduleNames)
 
-  /*
-    import _user_actions from 'user/actions'
-    import _user_getters from 'user/getters'
-    import _user_mutations from 'user/mutations'
-    import _user_state from 'user/state'
-    import _user_index from 'user/index'
-    // 判断是否为空，按需拼接
-    let _user_module = {
-      ..._user_index,
-      state: _user_state,
-      mutations: ..._user_mutations,
-      getters: ..._user_getters,
-      actions: ..._user_actions,
-      modules: {...}
-    }
-    */
+  // TODO: 生成code
 
-  // TODO: 生成全部的code
+  root.moduleNames = moduleNames
+  root.tree = moduleOptionTree
 
-  // rootModule.xx = moduleOptionsMap
-
-  // const { name, imports } = generateModule(moduleOptionTree, options)
-
-  // console.log('moduleOptions ；', moduleOptions)
-
-  // return `${JSON.stringify(JSON.parse(stringStores).testString.text)}`
-  return `export default ${JSON.stringify(rootModule)}`
+  return `export default ${JSON.stringify(root)}`
 }
 
 interface ResultSingleModule {
   // 如：'user/role/menu' 取 'menu'
   moduleInName: string
   imports: string[]
-  // TODO: 类型
-  modules: string[]
+  variables: string[]
   out: any
 }
-
+const storeExtensions = ['getters', 'actions', 'mutations', 'state']
 export function generateSingleModule(singleModule: any, options: ResolvedOptions) {
-  /*
-    import _user_actions from 'user/actions'
-    import _user_getters from 'user/getters'
-    import _user_mutations from 'user/mutations'
-    import _user_state from 'user/state'
-    import _user_index from 'user/index'
-    // 判断是否为空，按需拼接
-    let _user_module = {
-      ..._user_index,
-      state: _user_state,
-      mutations: ..._user_mutations,
-      getters: ..._user_getters,
-      actions: ..._user_actions,
-
-      modules: {
-      'role': _user_role,
-      'element': _user_element
-      }
-
-    }
-  */
   const result: ResultSingleModule = {
     moduleInName: '',
     imports: [],
-    modules: [],
+    variables: [],
     out: {},
   }
   result.moduleInName = singleModule.moduleName.split('/').pop()
-  result.out.moduleVariableName = `${moduleName2InName(singleModule.moduleName)}__module`
-  result.modules.push(`let _${result.out.moduleVariableName} = {`)
+  result.out.variableName = `${moduleName2InName(singleModule.moduleName)}__module`
 
+  // === start variables
+  result.variables.push(`let _${result.out.variableName} = {`)
   singleModule.imports.forEach((item: any) => {
     const importName = moduleName2InName(`${item.moduleName}__${item.moduleInType}`)
-    if (item.moduleName === 'index')
-      result.modules.push(`...${importName},`)
+    // item.moduleName === 'index' ||
+    if (item.moduleInType === 'index')
+      result.variables.push(`...${importName},`)
 
-    else if (subStoreExtensions.includes(item.moduleInType))
-      result.modules.push(`${item.moduleInType}: ...${importName},`)
+    // else if (storeExtensions.includes(item.moduleInType))
+    else
+      result.variables.push(`${item.moduleInType}: ...${importName},`)
 
     result.imports.push(`import * as ${importName} from '${item.filePath}'`)
   })
-
-  result.modules.push('}')
+  result.variables.push('}')
+  if (result.variables.length === 2)
+    result.variables = []
+  // === end variables
 
   return result
 }

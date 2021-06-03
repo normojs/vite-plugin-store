@@ -9,7 +9,7 @@ import App from './App.vue'
 import './index.css'
 
 console.log('store: ', store)
-console.log('store2: ', store2)
+// console.log('store2: ', store2)
 
 createStore(store)
 const app = createApp(App)
