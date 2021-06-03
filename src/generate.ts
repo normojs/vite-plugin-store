@@ -93,7 +93,14 @@ export function generateOptions(filePaths: string[], storeDir: string, options: 
  * }
  */
 export function generateClientCode(moduleOptions: ModuleOptions[], options: ResolvedOptions) {
-  const root: any = { moduleOptions, modules: {} }
+  const root: any = {
+    moduleOptions,
+    modules: {},
+
+    imports: [],
+    variables: [],
+    inmodules: [],
+  }
 
   const moduleOptionTree: any = {
     // 'name': result
@@ -129,6 +136,10 @@ export function generateClientCode(moduleOptions: ModuleOptions[], options: Reso
     root.modules[moduleName].moduleInName = moduleInName
     root.modules[moduleName].imports.push(...imports)
     root.modules[moduleName].variables.push(...variables)
+
+    root.imports.push(...imports)
+    root.variables.push(...variables)
+
     const splitKeys = moduleName.split('/')
 
     if (splitKeys.length >= 2) {
@@ -144,10 +155,25 @@ export function generateClientCode(moduleOptions: ModuleOptions[], options: Reso
       }// end if
 
       root.modules[parentModuleName].inmodules.push(`${moduleInName}: ${out.variableName}`)
+      // root.inmodules.push(`${moduleInName}: ${out.variableName}`)
     }// end if
   }// end for(moduleNames)
 
   // TODO: 生成code
+  /*
+    import xxx from xxx
+    ...
+    let moduleXxx = {}
+
+    {
+      ...index..
+      getters: ...
+      modules: {
+        a: moduleA,
+        b: moduleB
+      }
+    }
+  */
 
   root.moduleNames = moduleNames
   root.tree = moduleOptionTree
@@ -174,7 +200,7 @@ export function generateSingleModule(singleModule: any, options: ResolvedOptions
   result.out.variableName = `${moduleName2InName(singleModule.moduleName)}__module`
 
   // === start variables
-  result.variables.push(`let _${result.out.variableName} = {`)
+  result.variables.push(`let ${result.out.variableName} = {`)
   singleModule.imports.forEach((item: any) => {
     const importName = moduleName2InName(`${item.moduleName}__${item.moduleInType}`)
     // item.moduleName === 'index' ||
