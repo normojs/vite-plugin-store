@@ -2,18 +2,16 @@ import { createApp } from 'vue'
 // import { createRouter, createWebHistory } from 'vue-router'
 
 import { createStore } from 'vuex'
-import store from 'virtual:generated-store'
-import store2 from './store2/index.js'
+// import store from 'virtual:generated-store'
+import store2 from './store2/index.index'
 // import routes from 'virtual:generated-pages'
 import App from './App.vue'
 import './index.css'
 
-console.log('store: ', store)
-// console.log('store2: ', store2)
+const store_2 = createStore(store2)
 
-createStore(store)
 const app = createApp(App)
-
+app.use(store_2)
 // let n: number
 // n = 20
 // console.log('n: ', n + 10, Store2)
@@ -50,7 +48,7 @@ const store = createStore({
   })
 } */
 
-app.use(store)
+// app.use(store)
 
 // app.use(router)
 

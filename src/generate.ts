@@ -95,7 +95,13 @@ export function generateOptions(filePaths: string[], storeDir: string, options: 
 export function generateClientCode(moduleOptions: ModuleOptions[], options: ResolvedOptions) {
   const root: any = {
     moduleOptions,
-    modules: {},
+    modules: {
+      __root__: {
+        imports: [],
+        variables: [],
+        inmodules: [],
+      },
+    },
 
     imports: [],
     variables: [],
@@ -142,6 +148,7 @@ export function generateClientCode(moduleOptions: ModuleOptions[], options: Reso
 
     const splitKeys = moduleName.split('/')
 
+    // 存在父级module
     if (splitKeys.length >= 2) {
       splitKeys.pop()
       // 上一级module name
@@ -154,29 +161,48 @@ export function generateClientCode(moduleOptions: ModuleOptions[], options: Reso
         }
       }// end if
 
-      root.modules[parentModuleName].inmodules.push(`${moduleInName}: ${out.variableName}`)
+      root.modules[parentModuleName].inmodules.push(`${moduleInName}: ${out.variableName},`)
       // root.inmodules.push(`${moduleInName}: ${out.variableName}`)
     }// end if
+    else {
+      // 一级module
+      if (moduleName === 'index')
+        root.modules.__root__.variables = ['export default {', `...${out.variableName},`, '}']
+
+      else
+        root.modules.__root__.inmodules.push(`${moduleInName}: ${out.variableName},`)
+    }
   }// end for(moduleNames)
 
-  // TODO: 生成code
-  /*
-    import xxx from xxx
-    ...
-    let moduleXxx = {}
+  for (const moduleName of moduleNames) {
+    const module = root.modules[moduleName]
+    if (module.inmodules && module.inmodules.length > 0) {
+      /*
+        modules:{
+          menu: _user_role_menu__module
+        }
+      */
+      const insertArr = ['modules:{']
+      insertArr.push(...module.inmodules)
+      insertArr.push('}')
 
-    {
-      ...index..
-      getters: ...
-      modules: {
-        a: moduleA,
-        b: moduleB
-      }
+      const last = module.variables.pop()
+      module.variables.push(...insertArr)
+      module.variables.push(last)
     }
-  */
+  }
+  // 处理__root__
+  const insertArr = ['modules:{']
+  insertArr.push(...root.modules.__root__.inmodules)
+  insertArr.push('}')
+  const last = root.modules.__root__.variables.pop()
+  root.modules.__root__.variables.push(...insertArr)
+  root.modules.__root__.variables.push(last)
 
   root.moduleNames = moduleNames
   root.tree = moduleOptionTree
+
+  // TODO: 参考app.vue生成code
 
   return `export default ${JSON.stringify(root)}`
 }
@@ -189,6 +215,7 @@ interface ResultSingleModule {
   out: any
 }
 const storeExtensions = ['getters', 'actions', 'mutations', 'state']
+
 export function generateSingleModule(singleModule: any, options: ResolvedOptions) {
   const result: ResultSingleModule = {
     moduleInName: '',
@@ -197,21 +224,29 @@ export function generateSingleModule(singleModule: any, options: ResolvedOptions
     out: {},
   }
   result.moduleInName = singleModule.moduleName.split('/').pop()
-  result.out.variableName = `${moduleName2InName(singleModule.moduleName)}__module`
+  result.out.variableName = `${moduleName2InName(singleModule.moduleName)}_var`
 
   // === start variables
   result.variables.push(`let ${result.out.variableName} = {`)
   singleModule.imports.forEach((item: any) => {
-    const importName = moduleName2InName(`${item.moduleName}__${item.moduleInType}`)
+    const importName = moduleName2InName(`${item.moduleName}_${item.moduleInType}`)
     // item.moduleName === 'index' ||
-    if (item.moduleInType === 'index')
-      result.variables.push(`...${importName},`)
 
-    // else if (storeExtensions.includes(item.moduleInType))
+    if (storeExtensions.includes(item.moduleInType))
+      result.variables.push(`${item.moduleInType}: {...${importName}},`)
+      // 开发时的错误，vuex Cannot add property role, object is not extensible
+      // result.variables.push(`${item.moduleInType}: ${importName},`)
+
     else
-      result.variables.push(`${item.moduleInType}: ...${importName},`)
+      result.variables.splice(1, 0, `...${importName},`)
 
-    result.imports.push(`import * as ${importName} from '${item.filePath}'`)
+    // if (item.moduleInType === 'index' || item.moduleInType === 'index')
+    //   result.variables.splice(1, 0, `...${importName},`)
+
+    // else
+    //   result.variables.push(`${item.moduleInType}: ${importName},`)
+
+    result.imports.push(`import * as ${importName} from './${item.resolvedPath}'`)
   })
   result.variables.push('}')
   if (result.variables.length === 2)
