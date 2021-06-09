@@ -203,7 +203,15 @@ export function generateClientCode(moduleOptions: ModuleOptions[], options: Reso
   root.tree = moduleOptionTree
 
   // TODO: 参考app.vue生成code
+  const codes = []
+  for (const name of moduleNames) {
+    codes.push(root.modules[name].imports.join('\n'))
+    codes.push(root.modules[name].variables.join('\n'))
+  }
 
+  codes.push(root.modules.__root__.imports.join('\n'))
+  codes.push(root.modules.__root__.variables.join('\n'))
+  root.code = codes.join('\n')
   return `export default ${JSON.stringify(root)}`
 }
 

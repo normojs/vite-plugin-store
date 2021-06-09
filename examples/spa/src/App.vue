@@ -1,34 +1,34 @@
 <template>
-  <div>
-    状态：{{ state2 }}
-    <hr>
-    <hr>
-    <template v-for="(name, key) in store.moduleNames" :key="key">
-      <div>
-        // - 引入 {{ name }}
-        <pre>
+  <div class="store-section">
+    <div class="left">
+      <template v-for="(name, key) in store.moduleNames" :key="key">
+        <div>
+          <pre>
           {{ store.modules[name].imports.join('\n') }}
         </pre>
-        // - 定义
-        <pre>
+          <pre>
           {{ store.modules[name].variables.join('\n') }}
         </pre>
-      </div>
-      // ---------------------------------------
-      // ---------------------------------------
-    </template>
+        </div>
+      </template>
 
-    <!-- export default -->
-    <div>
-      // - 引入 __root__
-      <pre>
+      <!-- export default -->
+      <div>
+        <pre>
           {{ store.modules['__root__'].imports.join('\n') }}
         </pre>
-      // - 定义
-      <pre>
+        <pre>
           {{ store.modules['__root__'].variables.join('\n') }}
         </pre>
+      </div>
     </div>
+    <hr>
+    <div class="right">
+      <pre>
+        {{ store.code }}
+      </pre>
+    </div>
+
     <!-- <hello-word mds="xx" /> -->
   </div>
 </template>
@@ -48,3 +48,12 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.store-section{
+  display: flex;
+}
+.left{
+
+}
+</style>

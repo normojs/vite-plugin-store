@@ -38,8 +38,8 @@ function storePlugin(userOptions: UserOptions = {}): Plugin {
     },
     async load(id) {
       // debug.gen('load: %O', id)
-      if (id && id.includes('utils/cache'))
-        console.log('============:', id)
+      // if (id && id.includes('utils/cache'))
+      //   console.log('============:', id)
 
       if (id === MODULE_ID_VIRTUAL) {
         if (!generatedStores) {
@@ -55,38 +55,26 @@ function storePlugin(userOptions: UserOptions = {}): Plugin {
           // pluginOptions = storeOptions.pluginOptions
         }
 
-        // TODO: 生成code
+        // 生成code
         const clientCode = generateClientCode(moduleOptions, options)
 
         return clientCode
       }
     },
-    async transform(code: string, id: string) {
-      const { query } = parseVueRequest(id)
+    // async transform(code: string, id: string) {
+    //   const { query } = parseVueRequest(id)
 
-      // if (id === 'vite-plugin-store')
-      debug.transform('id: %O', id)
-      // const s = 'App.vue'
-      // if (id.endsWith(s))
-      // console.log(`code: ${s} \n`, code, '\n\n')
-      // console.log('dd', id)
+    //   // if (id === 'vite-plugin-store')
+    //   debug.transform('id: %O, query: %O', id, query)
+    //   if (query && query.vue && query.type === 'route') {
 
-      // return null
-
-      // {
-      //   if (query && query.vue && query.type === 'route') {
-      //     return {
-      //       code: 'export default {}',
-      //       map: null,
-      //     }
-      //   }
-      // }
-      return {
-        code,
-        // TODO source-map
-        map: null,
-      }
-    },
+    //   }
+    //   return {
+    //     code,
+    //     // TODO source-map
+    //     map: null,
+    //   }
+    // },
     generateBundle(_options, bundle) {
       if (options.replaceSquareBrackets) {
         const files = Object.keys(bundle).map(i => basename(i))
