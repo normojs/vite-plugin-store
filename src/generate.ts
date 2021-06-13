@@ -212,7 +212,10 @@ export function generateClientCode(moduleOptions: ModuleOptions[], options: Reso
   codes.push(root.modules.__root__.imports.join('\n'))
   codes.push(root.modules.__root__.variables.join('\n'))
   root.code = codes.join('\n')
-  return `export default ${JSON.stringify(root)}`
+  return root.code
+  // return `export default {
+    
+  // }`
 }
 
 interface ResultSingleModule {
@@ -253,8 +256,8 @@ export function generateSingleModule(singleModule: any, options: ResolvedOptions
 
     // else
     //   result.variables.push(`${item.moduleInType}: ${importName},`)
-
-    result.imports.push(`import * as ${importName} from './${item.resolvedPath}'`)
+    result.imports.push(`import * as ${importName} from '${item.componentPath}'`)
+    // result.imports.push(`import * as ${importName} from './${item.resolvedPath}'`)
   })
   result.variables.push('}')
   if (result.variables.length === 2)

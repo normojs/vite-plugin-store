@@ -2,15 +2,16 @@ import { createApp } from 'vue'
 // import { createRouter, createWebHistory } from 'vue-router'
 
 import { createStore } from 'vuex'
+
 import store from 'virtual:generated-store'
-// import store2 from './store2/index.index'
-// import routes from 'virtual:generated-pages'
+// import store from './store/index.index'
+
 import App from './App.vue'
 import './index.css'
 
 import { cacheGet } from './utils/cache'
 console.log('cacheGet: ', cacheGet())
-
+console.log('store.code: ', store)
 const store_1 = createStore(store)
 
 const app = createApp(App)

@@ -1,41 +1,26 @@
 <template>
-  <div class="store-section">
-    <div class="left">
-      <template v-for="(name, key) in store.moduleNames" :key="key">
-        <div>
-          <pre>
-          {{ store.modules[name].imports.join('\n') }}
-        </pre>
-          <pre>
-          {{ store.modules[name].variables.join('\n') }}
-        </pre>
-        </div>
-      </template>
-
-      <!-- export default -->
-      <div>
-        <pre>
-          {{ store.modules['__root__'].imports.join('\n') }}
-        </pre>
-        <pre>
-          {{ store.modules['__root__'].variables.join('\n') }}
-        </pre>
-      </div>
+  <div>
+    <div class="test">
+      测试111 {{ account }}
+      <button @click="onclick">修改account info</button>
     </div>
-    <hr>
-    <div class="right">
-      <pre>
-        {{ store.code }}
-      </pre>
+    <div class="store-section">
     </div>
-
-    <!-- <hello-word mds="xx" /> -->
   </div>
 </template>
 <script>
 import store from 'virtual:generated-store'
-console.log('store: ', store)
+import { mapState, mapActions } from 'vuex'
 export default {
+  computed: {
+    ...mapState({
+      state: state => state,
+      account: state => state.account,
+      accountInfo: state => state.account.info,
+      userRole: state => state['user/role'],
+      userRoleInfo: state => state['user/role'].info,
+    }),
+  },
   data() {
     return {
       store,
@@ -43,8 +28,13 @@ export default {
     }
   },
   mounted() {
-    this.state2 = this.$store.state
-    console.log('xxx', this.$store)
+  },
+  methods: {
+    onclick(){
+      this.$store.state.account.info = Math.random()
+      // this.accountInfo = Math.random()
+      console.log('修改', Math.random())
+    }
   },
 }
 </script>
