@@ -1,6 +1,14 @@
 ## developing
 
-Do not run
+```shell
+npm install
+npm run dev
+
+# open new ternimal
+npm run example:dev
+```
+
+
 
 # vite-plugin-vuex
 

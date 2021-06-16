@@ -1,10 +1,12 @@
-## 刚开发中....
-
-
-
 ### 介绍
 
+```shell
+npm install
+npm run dev
 
+# 新建终端，在根目录
+npm run example:dev
+```
 
 
 
@@ -16,6 +18,10 @@
 * ... ...
 
 ### 使用
+
+
+
+### 开发
 
 
 
