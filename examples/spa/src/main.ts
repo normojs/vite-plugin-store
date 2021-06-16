@@ -9,10 +9,17 @@ import store from 'virtual:generated-store'
 import App from './App.vue'
 import './index.css'
 
-import { cacheGet } from './utils/cache'
-console.log('cacheGet: ', cacheGet())
-console.log('store.code: ', store)
+// import { cacheGet } from './utils/cache'
+// console.log('cacheGet: ', cacheGet())
+// console.log('store.code: ', store)
 const store_1 = createStore(store)
+
+// if (import.meta.hot) {
+//   import.meta.hot.on('vite-plugin-store-update', (data) => {
+//     // 执行自定义更新
+//     console.log('-----', store)
+//   })
+// }
 
 const app = createApp(App)
 app.use(store_1)

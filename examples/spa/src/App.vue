@@ -1,8 +1,13 @@
 <template>
   <div>
+    <div>
+      {{ Math.random() }}
+    </div>
     <div class="test">
       测试111 {{ account }}
-      <button @click="onclick">修改account info</button>
+      <button @click="onclick">
+        修改account info
+      </button>
     </div>
     <div class="store-section">
     </div>
@@ -30,11 +35,11 @@ export default {
   mounted() {
   },
   methods: {
-    onclick(){
+    onclick() {
       this.$store.state.account.info = Math.random()
       // this.accountInfo = Math.random()
-      console.log('修改', Math.random())
-    }
+      console.log('修改1', Math.random())
+    },
   },
 }
 </script>
