@@ -1,8 +1,8 @@
-import { resolve, basename } from 'path'
-import type { Plugin, ResolvedConfig, ModuleNode } from 'vite'
+import { resolve } from 'path'
+import type { Plugin, ResolvedConfig } from 'vite'
 import { ResolvedOptions, UserOptions, ModuleOptions, Store } from './types'
 import { getFilesFromPath } from './files'
-import { generateOptions, generateClientCode, updateRouteFromHMR } from './generate'
+import { generateOptions, generateClientCode, updateStoreFromHMR } from './generate'
 import { debug, normalizePath } from './utils'
 import { resolveOptions } from './options'
 import { MODULE_IDS, MODULE_ID_VIRTUAL } from './constants'
@@ -25,7 +25,6 @@ function storePlugin(userOptions: UserOptions = {}): Plugin {
     enforce: 'pre',
     configResolved(_config) {
       config = _config
-      // debug.gen('config: %O', config)
       options.root = config.root
       storeDirPath = normalizePath(resolve(options.root, options.storeDir))
     },
@@ -50,21 +49,7 @@ function storePlugin(userOptions: UserOptions = {}): Plugin {
 
         // 生成code
         const clientCode = generateClientCode(moduleOptions, options)
-        console.log('root.code: ', clientCode)
         return clientCode
-      }
-    },
-    generateBundle(_options, bundle) {
-      if (options.replaceSquareBrackets) {
-        const files = Object.keys(bundle).map(i => basename(i))
-        for (const name in bundle) {
-          const chunk = bundle[name]
-          chunk.fileName = chunk.fileName.replace(/(\[|\])/g, '_')
-          if (chunk.type === 'chunk') {
-            for (const file of files)
-              chunk.code = chunk.code.replace(file, file.replace(/(\[|\])/g, '_'))
-          }
-        }
       }
     },
     // TODO: 热加载太简单了

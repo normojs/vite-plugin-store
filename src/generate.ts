@@ -299,6 +299,7 @@ export function pathsToTree(moduleOptions: ModuleOptions[]) {
 }
 
 // =====================================
-export function updateRouteFromHMR(content: string, filename: string, routes: Route[], options: ResolvedOptions): boolean {
+// TODO: 热更新
+export function updateStoreFromHMR(content: string, filename: string, routes: Route[], options: ResolvedOptions): boolean {
   return false
 }
