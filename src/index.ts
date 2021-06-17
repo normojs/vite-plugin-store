@@ -1,10 +1,9 @@
 import { resolve, basename } from 'path'
 import type { Plugin, ResolvedConfig, ModuleNode } from 'vite'
-import { Route, ResolvedOptions, UserOptions, ModuleOptions, Store } from './types'
+import { ResolvedOptions, UserOptions, ModuleOptions, Store } from './types'
 import { getFilesFromPath } from './files'
 import { generateOptions, generateClientCode, updateRouteFromHMR } from './generate'
 import { debug, normalizePath } from './utils'
-import { parseVueRequest } from './query'
 import { resolveOptions } from './options'
 import { MODULE_IDS, MODULE_ID_VIRTUAL } from './constants'
 
@@ -51,6 +50,7 @@ function storePlugin(userOptions: UserOptions = {}): Plugin {
 
         // 生成code
         const clientCode = generateClientCode(moduleOptions, options)
+        console.log('root.code: ', clientCode)
         return clientCode
       }
     },

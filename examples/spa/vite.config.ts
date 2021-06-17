@@ -16,14 +16,7 @@ const config = defineConfig({
     }),
     Store({
       storeDir: 'src/store',
-      pagesDir: [
-        { dir: 'src/pages', baseRoute: '' },
-        { dir: 'src/features/admin/pages', baseRoute: 'admin' },
-      ],
-      extensions: ['ts', 'js'],
-      syncIndex: false,
-      replaceSquareBrackets: true,
-
+      extensions: ['ts', 'js']
     }),
     Markdown(),
     Restart({

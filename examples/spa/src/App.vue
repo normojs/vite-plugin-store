@@ -4,7 +4,7 @@
       {{ Math.random() }}
     </div>
     <div class="test">
-      测试111 {{ account }}
+      测试111 {{ account }} - {{ userRoleInfo }}
       <button @click="onclick">
         修改account info
       </button>
@@ -22,8 +22,8 @@ export default {
       state: state => state,
       account: state => state.account,
       accountInfo: state => state.account.info,
-      userRole: state => state['user/role'],
-      userRoleInfo: state => state['user/role'].info,
+      userRole: state => state.user.role,
+      userRoleInfo: state => state.user.role.info,
     }),
   },
   data() {
@@ -33,6 +33,7 @@ export default {
     }
   },
   mounted() {
+    console.log(' this.$store: ',  this.$store)
   },
   methods: {
     onclick() {
