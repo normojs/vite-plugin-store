@@ -2,11 +2,10 @@ import { resolve } from 'path'
 import type { Plugin, ResolvedConfig } from 'vite'
 import { ResolvedOptions, UserOptions, ModuleOptions, Store } from './types'
 import { getFilesFromPath } from './files'
-import { generateOptions, generateClientCode, updateStoreFromHMR } from './generate'
+import { generateOptions, generateClientRoot, updateStoreFromHMR } from './generate'
 import { debug, normalizePath } from './utils'
 import { resolveOptions } from './options'
 import { MODULE_IDS, MODULE_ID_VIRTUAL } from './constants'
-
 function storePlugin(userOptions: UserOptions = {}): Plugin {
   let config: ResolvedConfig | undefined
   let moduleOptions: ModuleOptions[]
@@ -48,8 +47,28 @@ function storePlugin(userOptions: UserOptions = {}): Plugin {
         }
 
         // 生成code
-        const clientCode = generateClientCode(moduleOptions, options)
-        return clientCode
+        const root = generateClientRoot(moduleOptions, options)
+        // return clientCode
+        // TODO: 判断是否为开发环境
+        return `
+          import { createStore } from 'vuex'
+          ${root.code}
+          const _store = window.store
+          if(!window.store){
+            console.log('不存在store')
+            window.store = createStore(defaultValue)
+          }
+          export const store = window.store
+          if (import.meta.hot) {
+            import.meta.hot.accept((newModule) => {
+              let newStore = newModule.default
+              store.hotUpdate(newStore)
+              console.log('updated: count is now ', newStore.modules.account.getters.getAccountInfo())
+            })
+          }
+
+          export const root = ${JSON.stringify({ ...root, code: '' })}
+        `
       }
     },
     // TODO: 热加载太简单了
@@ -62,11 +81,25 @@ function storePlugin(userOptions: UserOptions = {}): Plugin {
         debug.hmr('hmr update: %s', file.replace(options.root, ''))
         return [module!]
         // server.ws.send({
-        //   type: 'custom',
-        //   event: 'vite-plugin-store-update',
-        //   data: module,
+        //   type: 'full-reload',
+        //   path: `${storeDirPath}/src/sotre/account.ts`,
         // })
         // return []
+        // server.ws.send({
+        //   type: 'update',
+        //   updates: [{
+        //     type: 'js-update',
+        //     path: '/src/sotre/account.ts',
+        //     acceptedPath: '/src/sotre/account.ts',
+        //     timestamp: Date.now(),
+        //   }],
+        // })
+        // server.ws.send({
+        //   type: 'custom',
+        //   event: 'store-update',
+        //   data: module,
+        // })
+        return []
       }
       // const isPagesDir = pagesDirPaths.find(p => file.startsWith(`${p}/`))
       // if (isPagesDir && options.extensionsRE.test(file)) {

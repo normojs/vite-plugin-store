@@ -3,6 +3,9 @@
     <div>
       {{ Math.random() }}
     </div>
+    <div>
+      mapGetters: {{ getAccountInfo }}
+    </div>
     <div class="test">
       测试111 {{ account }} - {{ userRoleInfo }}
       <button @click="onclick">
@@ -15,9 +18,12 @@
 </template>
 <script>
 import store from 'virtual:generated-store'
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 export default {
   computed: {
+    ...mapGetters({
+      getAccountInfo: 'getAccountInfo',
+    }),
     ...mapState({
       state: state => state,
       account: state => state.account,
@@ -33,7 +39,7 @@ export default {
     }
   },
   mounted() {
-    console.log(' this.$store: ',  this.$store)
+    console.log(' this.$store: ', this.$store)
   },
   methods: {
     onclick() {

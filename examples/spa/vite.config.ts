@@ -10,13 +10,16 @@ const config = defineConfig({
       '@': resolve(__dirname, 'src'),
     },
   },
+  optimizeDeps: {
+    exclude: ['virtual:generated-store'],
+  },
   plugins: [
     Vue({
       include: [/\.vue$/, /\.md$/],
     }),
     Store({
       storeDir: 'src/store',
-      extensions: ['ts', 'js']
+      extensions: ['ts', 'js'],
     }),
     Markdown(),
     Restart({

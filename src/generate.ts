@@ -92,7 +92,7 @@ export function generateOptions(filePaths: string[], storeDir: string, options: 
  *  }
  * }
  */
-export function generateClientCode(moduleOptions: ModuleOptions[], options: ResolvedOptions) {
+export function generateClientRoot(moduleOptions: ModuleOptions[], options: ResolvedOptions) {
   const root: any = {
     moduleOptions,
     modules: {
@@ -167,7 +167,7 @@ export function generateClientCode(moduleOptions: ModuleOptions[], options: Reso
     else {
       // 一级module
       if (moduleName === 'index')
-        root.modules.__root__.variables = ['export default {', `...${out.variableName},`, '}']
+        root.modules.__root__.variables = [`...${out.variableName},`]
 
       else
         root.modules.__root__.inmodules.push(`${moduleInName}: ${out.variableName},`)
@@ -195,9 +195,13 @@ export function generateClientCode(moduleOptions: ModuleOptions[], options: Reso
   const insertArr = ['modules:{']
   insertArr.push(...root.modules.__root__.inmodules)
   insertArr.push('}')
-  const last = root.modules.__root__.variables.pop()
+  root.modules.__root__.variables.unshift('const defaultValue = {')
+  // const last = root.modules.__root__.variables.pop()
   root.modules.__root__.variables.push(...insertArr)
-  root.modules.__root__.variables.push(last)
+  root.modules.__root__.variables.push('}')
+  root.modules.__root__.variables.push('export default defaultValue')
+
+  // root.modules.__root__.variables.push(last)
 
   root.moduleNames = moduleNames
   root.tree = moduleOptionTree
@@ -212,9 +216,9 @@ export function generateClientCode(moduleOptions: ModuleOptions[], options: Reso
   codes.push(root.modules.__root__.imports.join('\n'))
   codes.push(root.modules.__root__.variables.join('\n'))
   root.code = codes.join('\n')
-  return root.code
+  return root
   // return `export default {
-    
+
   // }`
 }
 
@@ -243,20 +247,29 @@ export function generateSingleModule(singleModule: any, options: ResolvedOptions
     const importName = moduleName2InName(`${item.moduleName}_${item.moduleInType}`)
     // item.moduleName === 'index' ||
 
-    if (storeExtensions.includes(item.moduleInType))
+    // 开发时的错误，vuex Cannot add property role, object is not extensible
+    // result.variables.push(`${item.moduleInType}: ${importName},`)
+    if (storeExtensions.includes(item.moduleInType)) {
       result.variables.push(`${item.moduleInType}: {...${importName}},`)
-      // 开发时的错误，vuex Cannot add property role, object is not extensible
-      // result.variables.push(`${item.moduleInType}: ${importName},`)
-
-    else
+    }
+    else {
+      //
       result.variables.splice(1, 0, `...${importName},`)
+    }
 
     // if (item.moduleInType === 'index' || item.moduleInType === 'index')
     //   result.variables.splice(1, 0, `...${importName},`)
 
     // else
     //   result.variables.push(`${item.moduleInType}: ${importName},`)
-    result.imports.push(`import * as ${importName} from '${item.componentPath}'`)
+    if (item.moduleInType === 'state') {
+      //
+      // result.imports.push(`import ${importName} from '${item.componentPath}?t=${Date.now()}'`)
+      result.imports.push(`import ${importName} from '${item.componentPath}'`)
+    }
+    else {
+      result.imports.push(`import * as ${importName} from '${item.componentPath}?t=${Date.now()}'`)
+    }
     // result.imports.push(`import * as ${importName} from './${item.resolvedPath}'`)
   })
   result.variables.push('}')
