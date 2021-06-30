@@ -3,21 +3,18 @@
 > 或者在gitee上提问：https://gitee.com/source-code-online/vite-plugin-store/issues
 
 
-##### github issues 地址
+##### What caused the problem?
 
 
 
-##### 该问题是怎么引起的？
+##### Replay steps
 
 
 
-##### 重现步骤
+##### Report an error message
 
 
 
-##### 报错信息
+##### Supplementary information (guess correction method)
 
-
-
-##### 补充信息（猜测改正方法）
 
