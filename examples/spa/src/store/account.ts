@@ -2,7 +2,7 @@ import { getXx } from '../utils/db'
 
 export const state = () => {
   return {
-    path: '/account',
+    path: '/1',
     info: 'File system based vuex plugin for Vite',
     token: null,
   }
@@ -17,7 +17,7 @@ export const mutations = {
 }
 
 export const getters = {
-  getAccountInfo(state: any) {
-    return `${state.path}:---测试123`
+  getAccountInfo(state) {
+    return `${state.path}--${Math.random()}`
   },
 }

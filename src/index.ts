@@ -51,7 +51,7 @@ function storePlugin(userOptions: UserOptions = {}): Plugin {
         // return clientCode
         // TODO: 判断是否为开发环境
         return `
-          import { createStore } from 'vuex'
+          import { createStore, mapState, mapGetters } from 'vuex'
           ${root.code}
           const _store = window.store
           if(!window.store){
@@ -59,11 +59,12 @@ function storePlugin(userOptions: UserOptions = {}): Plugin {
             window.store = createStore(defaultValue)
           }
           export const store = window.store
+          export {mapState, mapGetters};
           if (import.meta.hot) {
             import.meta.hot.accept((newModule) => {
               let newStore = newModule.default
-              store.hotUpdate(newStore)
-              console.log('updated: count is now ', newStore.modules.account.getters.getAccountInfo())
+              // console.log('hot newStore: ', newStore.modules.account.state())
+              window.store.hotUpdate(newStore)
             })
           }
 
@@ -79,6 +80,9 @@ function storePlugin(userOptions: UserOptions = {}): Plugin {
         const { moduleGraph } = server
         const module = moduleGraph.getModuleById(MODULE_ID_VIRTUAL)
         debug.hmr('hmr update: %s', file.replace(options.root, ''))
+
+        // TODO: 判断修改的文件, 如果修改了index文件、或state文件，则全局刷新
+        // TODO: v2 如果修改了index文件里的state方法，则全局刷新
         return [module!]
         // server.ws.send({
         //   type: 'full-reload',

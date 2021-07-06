@@ -17,8 +17,10 @@
   </div>
 </template>
 <script>
+// import storeConfig, { root, store } from 'virtual:generated-store'
 import store from 'virtual:generated-store'
-import { mapState, mapGetters } from 'vuex'
+// import { mapState, mapGetters } from 'vuex'
+import { mapState, mapGetters } from 'virtual:generated-store'
 export default {
   computed: {
     ...mapGetters({
