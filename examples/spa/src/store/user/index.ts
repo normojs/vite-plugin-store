@@ -1,4 +1,4 @@
-export const namespaced = true
+// export const namespaced = true
 
 // 使state.ts失效
 export const state = () => {

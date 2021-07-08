@@ -1,3 +1,3 @@
 export const getInfo = function({ state }: any, params: any) {
-  return state.info
+  return `${state.info}`
 }

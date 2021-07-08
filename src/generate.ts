@@ -74,7 +74,7 @@ export function generateOptions(filePaths: string[], storeDir: string, options: 
 
     // moduleOptionsMap
 
-    moduleOptions.push({ root: options.root, resolvedPath, moduleName, moduleInType, componentPath, filePath })
+    moduleOptions.push({ fullPath: options.root + componentPath, root: options.root, resolvedPath, moduleName, moduleInType, componentPath, filePath })
   }// end for
 
   return { moduleOptions, pluginOptions }
@@ -195,11 +195,11 @@ export function generateClientRoot(moduleOptions: ModuleOptions[], options: Reso
   const insertArr = ['modules:{']
   insertArr.push(...root.modules.__root__.inmodules)
   insertArr.push('}')
-  root.modules.__root__.variables.unshift('const defaultValue = {')
+  root.modules.__root__.variables.unshift('const generatedStore = {')
   // const last = root.modules.__root__.variables.pop()
   root.modules.__root__.variables.push(...insertArr)
   root.modules.__root__.variables.push('}')
-  root.modules.__root__.variables.push('export default defaultValue')
+  // root.modules.__root__.variables.push('export default _generate_store_code')
 
   // root.modules.__root__.variables.push(last)
 
@@ -265,9 +265,10 @@ export function generateSingleModule(singleModule: any, options: ResolvedOptions
     if (item.moduleInType === 'state') {
       //
       // result.imports.push(`import ${importName} from '${item.componentPath}?t=${Date.now()}'`)
-      result.imports.push(`import ${importName} from '${item.componentPath}'`)
+      result.imports.push(`import ${importName} from '${item.componentPath}?t=${Date.now()}'`)
     }
     else {
+      // ?t=${Date.now()}
       result.imports.push(`import * as ${importName} from '${item.componentPath}?t=${Date.now()}'`)
     }
     // result.imports.push(`import * as ${importName} from './${item.resolvedPath}'`)

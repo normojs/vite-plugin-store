@@ -1,13 +1,14 @@
 import { cacheGet } from '@/utils/cache'
 
 // 严格模式，默认true
-export const strict = true // cacheGet()
+export const strict = false // cacheGet()
+export const namespaced = false
 // 插件地址，默认：plugins
 export const pluginDir = 'plugins'
 export const state = () => {
   return {
-    path: '/',
-    info: 'File system based vuex plugin for Vite',
+    path: '/11',
+    info: '111 1File system based vuex plugin for Vite',
     token: null,
   }
 }

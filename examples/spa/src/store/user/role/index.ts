@@ -7,3 +7,9 @@ export const state = () => {
     token: null,
   }
 }
+
+export const mutations = {
+  setRoleInfo(state: any, data: any) {
+    state.info = data
+  },
+}

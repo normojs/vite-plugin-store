@@ -5,7 +5,7 @@ import './index.css'
 // import { createRouter, createWebHistory } from 'vue-router'
 
 import { createStore } from 'vuex'
-import storeConfig, { root, store } from 'virtual:generated-store'
+import { root, store } from 'virtual:generated-store'
 console.log('root: ', root)
 // // import store from './store/index.index'
 // const store_1 = createStore(storeConfig)

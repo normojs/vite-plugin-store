@@ -28,6 +28,8 @@ export interface Module {
 
 // TODO: 改为ModuleOption
 export interface ModuleOptions {
+  // 全路径，e.g 'E:/fulusco/vite-plugin-store/examples/spa/src/store/account.ts'
+  fullPath: string
   // root
   root: string
   // e.g 'user/mutations' | 'user/actions' | 'user/index'

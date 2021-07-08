@@ -9,7 +9,16 @@
     <div class="test">
       测试111 {{ account }} - {{ userRoleInfo }}
       <button @click="onclick">
-        修改account info
+        修改account info(非严格模式时)
+      </button>
+    </div>
+    <div>
+      menu: {{ userMenuInfo }}
+    </div>
+
+    <div>
+      <button @click="editStore">
+        修改account path (mutation)
       </button>
     </div>
     <div class="store-section">
@@ -17,14 +26,12 @@
   </div>
 </template>
 <script>
-// import storeConfig, { root, store } from 'virtual:generated-store'
-import store from 'virtual:generated-store'
-// import { mapState, mapGetters } from 'vuex'
-import { mapState, mapGetters } from 'virtual:generated-store'
+// import { store, mapState, mapGetters } from 'virtual:generated-store'
+import { mapState, mapGetters } from 'vuex'
 export default {
   computed: {
     ...mapGetters({
-      getAccountInfo: 'getAccountInfo',
+      getAccountInfo: 'account/getAccountInfo',
     }),
     ...mapState({
       state: state => state,
@@ -32,18 +39,25 @@ export default {
       accountInfo: state => state.account.info,
       userRole: state => state.user.role,
       userRoleInfo: state => state.user.role.info,
+      userMenuInfo: state => state.user.role.menu.info,
     }),
   },
   data() {
     return {
-      store,
       state2: {},
     }
   },
   mounted() {
-    console.log(' this.$store: ', this.$store)
+    console.log('this.$store: ', this.$store)
   },
   methods: {
+    editStore() {
+      this.$store.commit('account/__init_account__', {
+        path: `/path?t=${Date.now()}`,
+        info: 'File system based vuex plugin for Vite',
+        token: null,
+      })
+    },
     onclick() {
       this.$store.state.account.info = Math.random()
       // this.accountInfo = Math.random()

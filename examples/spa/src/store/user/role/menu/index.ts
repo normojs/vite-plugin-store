@@ -1,4 +1,6 @@
 // TODO: 未生效
+export const namespaced = false
+
 export const state = () => {
   return {
     path: '/user/role/menu',

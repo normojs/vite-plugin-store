@@ -19,6 +19,7 @@
     "index.d.ts"
   ],
   "scripts": {
+    "dev:all":"npm run dev && npm run example:dev",
     "dev": "npm run build -- --watch --ignore-watch examples",
     "build": "tsup src/index.ts --dts --format cjs,esm",
     "prepublishOnly": "npm run build",

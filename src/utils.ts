@@ -29,6 +29,10 @@ export const debug = {
 const dynamicRouteRE = /^\[.+\]$/
 export const nuxtDynamicRouteRE = /^_[\s\S]*$/
 
+export function slash(str: string): string {
+  return str.replace(/\\/g, '/')
+}
+
 export function resolveImportMode(
   filepath: string,
   options: ResolvedOptions,
