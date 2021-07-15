@@ -9,8 +9,8 @@ export function isSubModule(parentModuleName: string, subModuleName: string) {
   return false
 }
 
-export function extensionsToGlob(extensions: string[]) {
-  return extensions.length > 1 ? `{${extensions.join(',')}}` : extensions[0] || ''
+export function extensionsToGlob(extensions: string[]|undefined) {
+  return (extensions && extensions.length > 1) ? `{${extensions.join(',')}}` : (extensions && extensions[0]) || ''
 }
 
 export function normalizePath(str: string): string {

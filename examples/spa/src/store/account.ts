@@ -2,7 +2,7 @@ import { getXx } from '../utils/db'
 export const namespaced = true
 export const state = () => {
   return {
-    path: '/1',
+    path: '/1111',
     info: 'account File system based vuex plugin for Vite',
     token: null,
   }
