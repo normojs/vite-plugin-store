@@ -5,6 +5,9 @@ import Markdown from 'vite-plugin-md'
 import Restart from 'vite-plugin-restart'
 const { resolve } = require('path')
 const config = defineConfig({
+	server:{
+		port: 3333
+	},
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src'),
