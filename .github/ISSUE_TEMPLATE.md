@@ -3,18 +3,23 @@
 > 或者在gitee上提问：https://gitee.com/source-code-online/vite-plugin-store/issues
 
 
-##### What caused the problem?
+##### 如何引起的当前问题，简单描述 | What caused the problem?
 
 
 
-##### Replay steps
+##### 复现步骤 | Replay steps
 
 
 
-##### Report an error message
+##### 错误信息 | Report an error message
+
+```javascript
+// 请输入错误信息 | error or imags
+```
 
 
 
-##### Supplementary information (guess correction method)
+##### 补充信息（错误猜测） | Supplementary information (guess correction method)
 
+> 如当前开发环境：vite版本等
 
