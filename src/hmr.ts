@@ -1,7 +1,8 @@
 
 import { ViteDevServer } from 'vite'
-import { debug, normalizePath, slash } from './utils'
+import { debug, normalizePath, slash, getPathName } from './utils'
 import { ResolvedOptions } from './types'
+import { HMR_MODULE_NAMES } from './constants'
 export function handleHMR(
   server: ViteDevServer,
   generateRoot: any,
@@ -39,15 +40,31 @@ export function handleHMR(
   // TODO: 删除、添加
   watcher.on('change', (file) => {
     const path = slash(file)
-    const isPagesDir = path.startsWith(`${options.storeDir}/`)
-    console.log('isPagesDir: ', isPagesDir, generateRoot)
-    // TODO: 类型定义
-    let hotEvent: any = {
+
+    const isStoreDir = path.startsWith(`${options.storeDir}/`)
+
+    /* const hotEvent: any = {
       // type: state、full-reload、hot-update
       // type: 'hot-update',
-    }
-    if (isPagesDir) {
-      for (const index in generateRoot.moduleOptions) {
+    } */
+
+    if (isStoreDir) {
+      const fileName = getPathName(path)
+      // 如果修改的文件名: mutations、actions、getters
+      if (HMR_MODULE_NAMES.includes(fileName)) {
+        //
+        server.ws.send({
+          type: 'custom',
+          event: 'vite-plugin-store-update',
+          data: { // hotEvent
+            type: 'hot-update',
+          },
+        })
+      }
+      else {
+        fullReload()
+      }
+      /* for (const index in generateRoot.moduleOptions) {
         const moduleOption = generateRoot.moduleOptions[index]
         if (path === moduleOption.fullPath) {
           hotEvent = moduleOption
@@ -66,7 +83,7 @@ export function handleHMR(
         type: 'custom',
         event: 'vite-plugin-store-update',
         data: hotEvent,
-      })
-    }
+      }) */
+    }// end if(isStoreDir)
   })
 }

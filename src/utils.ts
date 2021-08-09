@@ -1,3 +1,4 @@
+import { basename } from 'path'
 import Debug from 'debug'
 import { ResolvedOptions, Route } from './types'
 
@@ -44,6 +45,21 @@ export function resolveImportMode(
     return 'sync'
   else
     return mode
+}
+
+export function getPathBaseName(filepath: string) {
+  /*
+  path.basename('/foo/bar/baz/asdf/quux.html')
+// returns
+'quux.html'
+  */
+  return basename(filepath)
+}
+
+// TODO: 改为 getFileName
+export function getPathName(filepath: string) {
+  const baseName = getPathBaseName(filepath)
+  return baseName.split('.')[0]
 }
 
 export function pathToName(filepath: string) {

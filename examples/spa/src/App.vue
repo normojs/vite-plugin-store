@@ -5,6 +5,8 @@
     </div>
     <div>
       mapGetters: {{ getAccountInfo }}
+      <hr />
+      getUserRoleInfo: {{ getUserRoleInfo }}
     </div>
     <div class="test">
       测试111 {{ account }} - {{ userRoleInfo }}
@@ -13,7 +15,7 @@
       </button>
     </div>
     <div>
-      menu: {{ userMenuInfo }}
+      menu1: {{ userMenuInfo }}
     </div>
 
     <div>
@@ -32,6 +34,7 @@ export default {
   computed: {
     ...mapGetters({
       getAccountInfo: 'account/getAccountInfo',
+      getUserRoleInfo: 'user/role/getUserRoleInfo',
     }),
     ...mapState({
       state: state => state,

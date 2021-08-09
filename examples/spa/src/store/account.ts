@@ -22,6 +22,6 @@ export const mutations = {
 
 export const getters = {
   getAccountInfo(state) {
-    return `${state.path}-12-${Math.random()}1`
+    return `${state.path}-accounts getters-${Math.random()}1`
   },
 }

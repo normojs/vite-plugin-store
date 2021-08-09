@@ -2,7 +2,7 @@
 export const state = () => {
   return {
     path: '/user/role',
-    info: 'File system based vuex plugin for Vite',
+    info: '用户所属角色 - info1',
     description: '用户所属角色',
     token: null,
   }
