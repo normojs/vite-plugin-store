@@ -1,6 +1,5 @@
 export const generateCode = function(root: any) {
   return `
-  
   import { createStore } from 'vuex'
   // ================= 生成了store code ==================
   ${root.code}

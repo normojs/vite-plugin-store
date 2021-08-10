@@ -3,8 +3,8 @@ import { readFileSync } from 'fs'
 import type { Plugin, ResolvedConfig } from 'vite'
 import { ResolvedOptions, UserOptions, ModuleOptions, Store } from './types'
 import { getFilesFromPath } from './files'
-import { generateOptions, generateClientRoot, updateStoreFromHMR } from './generate'
-import { debug, normalizePath, slash } from './utils'
+import { generateOptions, generateClientRoot } from './generate'
+import { debug, normalizePath } from './utils'
 import { handleHMR } from './hmr'
 import { resolveOptions } from './options'
 import { MODULE_IDS, MODULE_ID_VIRTUAL } from './constants'
@@ -15,10 +15,6 @@ function storePlugin(userOptions: UserOptions = {}): Plugin {
   let config: ResolvedConfig | undefined
   let moduleOptions: ModuleOptions[]
 
-  // let generatedStores: Store[] | null | undefined
-  // let generatedStore: Store | null | undefined
-
-  // ['account.ts', 'user/actions.ts',]
   let storeFilePaths: string[] = [] // []
   let storeDirPath = '' // 'e://xxx/store'
 
@@ -68,8 +64,8 @@ function storePlugin(userOptions: UserOptions = {}): Plugin {
     },
     configureServer(server) {
       // const { ws, watcher } = server
-      console.log('generateRoot: ', generateRoot)
-      handleHMR(server, generateRoot, options, storeFilePaths)
+      // handleHMR(server, generateRoot, options, storeFilePaths)
+      handleHMR(server, options)
     },
     async handleHotUpdate(ctx) {
       const { file, server } = ctx
@@ -78,7 +74,7 @@ function storePlugin(userOptions: UserOptions = {}): Plugin {
       if (isPagesDir) {
         const { moduleGraph } = server
         const module = moduleGraph.getModuleById(MODULE_ID_VIRTUAL)
-        debug.hmr('---- --hmr update: %s', file.replace(options.root, ''))
+        debug.hmr('hmr update: %s', file.replace(options.root, ''))
 
         // TODO: 判断修改的文件, 如果修改了index文件、或state文件，则全局刷新
         // TODO: v2 如果修改了index文件里的state方法，则全局刷新

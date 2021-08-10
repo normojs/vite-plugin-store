@@ -250,7 +250,14 @@ export function generateSingleModule(singleModule: any, options: ResolvedOptions
     // 开发时的错误，vuex Cannot add property role, object is not extensible
     // result.variables.push(`${item.moduleInType}: ${importName},`)
     if (storeExtensions.includes(item.moduleInType)) {
-      result.variables.push(`${item.moduleInType}: {...${importName}},`)
+      /*
+        支持:
+          export default{}
+          export const getters = {}
+          export const getUserRoleInfo = (state) => {}
+      */
+      // result.variables.push(`${item.moduleInType}: {...${importName}},`)
+      result.variables.push(`${item.moduleInType}: {...${importName}.default || ${importName}.${item.moduleInType} || ${importName} },`)
     }
     else {
       //
