@@ -42,7 +42,7 @@ export function generateOptions(filePaths: string[], storeDir: string, options: 
   for (const filePath of filePaths) {
     // 去除后缀
     const resolvedPath = filePath.replace(extensionsRE, '')
-    const componentPath = `/${storeDir}/${filePath}`
+    const componentPath = storeDir.startsWith('/')?`${storeDir}/${filePath}`:`/${storeDir}/${filePath}`
     // resolvedPath: 'index' | 'user/index' | 'user/getters' | 'user/mutations'
     const temps = resolvedPath.split('/')
 
